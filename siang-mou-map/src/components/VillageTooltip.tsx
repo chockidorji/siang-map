@@ -5,9 +5,13 @@ interface Props {
   onDismiss: () => void;
 }
 
+// Thresholds match the pin colours in VillagePin.tsx:
+//   ≥ 80% → emerald  (success)
+//   ≥ 40% → orange   (in progress)
+//   <  40% → red     (low)
 function pctTone(pct: number): { bar: string; text: string } {
   if (pct >= 80) return { bar: 'bg-emerald-500', text: 'text-emerald-600' };
-  if (pct >= 50) return { bar: 'bg-amber-500',   text: 'text-amber-600' };
+  if (pct >= 40) return { bar: 'bg-orange-500',  text: 'text-orange-600' };
   return { bar: 'bg-red-500', text: 'text-red-600' };
 }
 
