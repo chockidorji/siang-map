@@ -69,6 +69,23 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
+// The SHP packs several closely-spaced settlements into single compound
+// names ("Tuting Village Purung Old Tuting" is three places at one point).
+// Those compound strings produce 30+ char labels that crowd the map. Map
+// them to a cleaner short form here — keep the ID and lat/lng unchanged so
+// the location still resolves, just the visible label is shortened.
+const NAME_OVERRIDE = {
+  'Tuting Village Purung Old Tuting': 'Old Tuting',
+  'Millang Langdum-Langkong(Silang)': 'Millang Langdum',
+  'Riga Mongku Mobuk': 'Riga Mongku',
+  'Damro-Boga-Lasing': 'Damro-Boga',
+  'Komkar (Buksang)': 'Komkar Buksang',
+  'Komkar(Sizer)': 'Komkar Sizer',
+  'Komkar(Rasing)': 'Komkar Rasing',
+  'Pangkang Kumku Jorkong': 'Pangkang Jorkong',
+};
+const applyNameOverride = (name) => NAME_OVERRIDE[name] ?? name;
+
 // Tier rank: higher wins on coord-collision.
 const TIER_RANK = {
   'district-hq': 4,
@@ -128,9 +145,10 @@ function assignDistrict(_name, lat, lng) {
 const DEDUPE_PROX = 0.005;
 const collected = [];
 
-function add(name, tier, lat, lng) {
-  if (!name) return;
+function add(rawName, tier, lat, lng) {
+  if (!rawName) return;
   if (isPfr(lat, lng)) return;
+  const name = applyNameOverride(rawName);
 
   for (const row of collected) {
     if (Math.hypot(lat - row.lat, lng - row.lng) < DEDUPE_PROX) {
