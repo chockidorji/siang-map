@@ -20,6 +20,12 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Right-edge drawer slide-in: enters from off-screen-right toward the left. */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
 /* Override Leaflet's default gray container bg so empty area outside the
    district shapefile blends with the page (the design has no basemap tiles).
    leaflet.css is imported after this file, so we need higher specificity. */

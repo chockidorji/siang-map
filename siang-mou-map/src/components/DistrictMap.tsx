@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -131,10 +131,11 @@ function LayerStatusBanner({ failed }: { failed: string[] }) {
 }
 
 // --- Main component ---------------------------------------------------------
+// Drawer-style status card lives at the right edge, so we no longer need to
+// track the pin's pixel position — just which village is active and how it
+// was opened.
 type ActiveCard = {
   village: Village;
-  x: number;
-  y: number;
   source: 'hover' | 'pinned';
 } | null;
 
@@ -148,42 +149,17 @@ export default function DistrictMap({ district }: Props) {
     [district],
   );
 
-  // Pre-compute label placements once per district change.
   const placements = useMemo(() => computePlacements(filteredVillages), [filteredVillages]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
-  // Track container size so the tooltip can clamp/flip itself within the map.
-  const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
-  useLayoutEffect(() => {
-    if (!containerRef.current) return;
-    const el = containerRef.current;
-    const measure = () => setContainerSize({ w: el.clientWidth, h: el.clientHeight });
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
   const [active, setActive] = useState<ActiveCard>(null);
-
-  function pinAt(v: Village): { x: number; y: number } | null {
-    if (!mapRef.current) return null;
-    const pt = mapRef.current.latLngToContainerPoint([v.lat, v.lng]);
-    return { x: pt.x, y: pt.y };
-  }
 
   function handleHover(village: Village | null) {
     // Pinned cards take precedence — a stray mouse-move shouldn't replace them.
     if (active?.source === 'pinned') return;
-    if (!village) {
-      setActive(null);
-      return;
-    }
-    const pos = pinAt(village);
-    if (!pos) return;
-    setActive({ village, ...pos, source: 'hover' });
+    setActive(village ? { village, source: 'hover' } : null);
   }
 
   function handleClick(village: Village) {
@@ -192,9 +168,7 @@ export default function DistrictMap({ district }: Props) {
       setActive(null);
       return;
     }
-    const pos = pinAt(village);
-    if (!pos) return;
-    setActive({ village, ...pos, source: 'pinned' });
+    setActive({ village, source: 'pinned' });
   }
 
   // ESC closes any active card (hover or pinned).
@@ -206,36 +180,17 @@ export default function DistrictMap({ district }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Whenever the map moves (zoom/pan/tab switch animation), refresh the
-  // pinned card's pixel position so it tracks the underlying pin. Hover
-  // cards are short-lived so we just drop them. Also: click on the map
-  // background (not a pin) dismisses a pinned card.
-  //
-  // We attach these via the map ref rather than react-leaflet's
-  // useMapEvents because that hook is only usable inside a child of
-  // MapContainer; we want the handlers right next to the rest of the
-  // active-card state.
+  // Click on the map background (not a pin) dismisses a pinned card. We hook
+  // this via the raw map ref instead of useMapEvents so the handler lives next
+  // to the rest of the active-card state.
   useEffect(() => {
     const m = mapRef.current;
     if (!m) return;
-    const onMove = () => {
-      setActive((prev) => {
-        if (!prev) return null;
-        if (prev.source === 'hover') return null;
-        if (!mapRef.current) return prev;
-        const pt = mapRef.current.latLngToContainerPoint([prev.village.lat, prev.village.lng]);
-        return { ...prev, x: pt.x, y: pt.y };
-      });
-    };
     const onMapClick = () => {
       setActive((prev) => (prev?.source === 'pinned' ? null : prev));
     };
-    m.on('move', onMove);
-    m.on('zoom', onMove);
     m.on('click', onMapClick);
     return () => {
-      m.off('move', onMove);
-      m.off('zoom', onMove);
       m.off('click', onMapClick);
     };
   }, [district]);
@@ -304,13 +259,9 @@ export default function DistrictMap({ district }: Props) {
 
       <LayerStatusBanner failed={failedLayers} />
 
-      {active && containerSize.w > 0 && (
+      {active && (
         <VillageTooltip
           village={active.village}
-          x={active.x}
-          y={active.y}
-          containerW={containerSize.w}
-          containerH={containerSize.h}
           source={active.source}
           onDismiss={() => setActive(null)}
         />
