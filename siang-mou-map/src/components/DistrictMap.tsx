@@ -131,14 +131,9 @@ function LayerStatusBanner({ failed }: { failed: string[] }) {
 }
 
 // --- Main component ---------------------------------------------------------
-// Drawer-style status card lives at the right edge, so we no longer need to
-// track the pin's pixel position — just which village is active and how it
-// was opened.
-type ActiveCard = {
-  village: Village;
-  source: 'hover' | 'pinned';
-} | null;
-
+// The drawer is opened only by pin click (keyboard Enter/Space on a focused
+// pin counts as a click via Leaflet's `keyboard: true`). Hover does not open
+// the drawer — it's a focused, deliberate action.
 export default function DistrictMap({ district }: Props) {
   const districtGeo = useGeoJson(`/geo/district-${district}.geojson`);
   const drainageGeo = useGeoJson(`/geo/drainage-${district}.geojson`);
@@ -154,24 +149,14 @@ export default function DistrictMap({ district }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
-  const [active, setActive] = useState<ActiveCard>(null);
-
-  function handleHover(village: Village | null) {
-    // Pinned cards take precedence — a stray mouse-move shouldn't replace them.
-    if (active?.source === 'pinned') return;
-    setActive(village ? { village, source: 'hover' } : null);
-  }
+  const [active, setActive] = useState<Village | null>(null);
 
   function handleClick(village: Village) {
-    // Clicking the same pin again closes its card.
-    if (active?.village.id === village.id && active.source === 'pinned') {
-      setActive(null);
-      return;
-    }
-    setActive({ village, source: 'pinned' });
+    // Clicking the same pin again closes the drawer.
+    setActive((prev) => (prev?.id === village.id ? null : village));
   }
 
-  // ESC closes any active card (hover or pinned).
+  // ESC closes the drawer.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setActive(null);
@@ -180,25 +165,20 @@ export default function DistrictMap({ district }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Click on the map background (not a pin) dismisses a pinned card. We hook
-  // this via the raw map ref instead of useMapEvents so the handler lives next
-  // to the rest of the active-card state.
+  // Click on the map background (not a pin) dismisses the drawer.
   useEffect(() => {
     const m = mapRef.current;
     if (!m) return;
-    const onMapClick = () => {
-      setActive((prev) => (prev?.source === 'pinned' ? null : prev));
-    };
+    const onMapClick = () => setActive(null);
     m.on('click', onMapClick);
     return () => {
       m.off('click', onMapClick);
     };
   }, [district]);
 
-  // Drop a stale pinned card when the user changes districts (the village
-  // belongs to the previous district).
+  // Drop a stale card when the user changes districts.
   useEffect(() => {
-    setActive((prev) => (prev && prev.village.district !== district ? null : prev));
+    setActive((prev) => (prev && prev.district !== district ? null : prev));
   }, [district]);
 
   const failedLayers = [
@@ -251,7 +231,6 @@ export default function DistrictMap({ district }: Props) {
             key={v.id}
             village={v}
             placement={placements.get(v.id)}
-            onHover={handleHover}
             onClick={handleClick}
           />
         ))}
@@ -260,11 +239,7 @@ export default function DistrictMap({ district }: Props) {
       <LayerStatusBanner failed={failedLayers} />
 
       {active && (
-        <VillageTooltip
-          village={active.village}
-          source={active.source}
-          onDismiss={() => setActive(null)}
-        />
+        <VillageTooltip village={active} onDismiss={() => setActive(null)} />
       )}
     </div>
   );

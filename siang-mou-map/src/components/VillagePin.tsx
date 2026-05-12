@@ -12,7 +12,6 @@ interface Props {
    * to reduce overlap.
    */
   placement?: LabelPlacement;
-  onHover: (village: Village | null, event?: L.LeafletMouseEvent) => void;
   onClick: (village: Village, event: L.LeafletMouseEvent) => void;
 }
 
@@ -41,8 +40,6 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
       ? 'left-1/2 bottom-[20px] -translate-x-1/2'
       : 'left-1/2 top-[20px] -translate-x-1/2';
 
-  // The chip uses a white drop shadow + text shadow so overlapping labels
-  // stay legible in dense clusters.
   return L.divIcon({
     className: '',
     iconSize: [16, 16],
@@ -62,12 +59,7 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
   });
 }
 
-export default function VillagePin({
-  village,
-  placement = 'below',
-  onHover,
-  onClick,
-}: Props) {
+export default function VillagePin({ village, placement = 'below', onClick }: Props) {
   return (
     <Marker
       position={[village.lat, village.lng]}
@@ -76,13 +68,9 @@ export default function VillagePin({
       // and converts Enter/Space into a click event, so wiring `click` is
       // enough to get keyboard activation for free.
       keyboard
-      // `title` populates the marker root's title attribute (screen reader fallback).
       title={ariaLabel(village)}
-      // `alt` populates aria-label on the marker root.
       alt={ariaLabel(village)}
       eventHandlers={{
-        mouseover: (e) => onHover(village, e),
-        mouseout: () => onHover(null),
         click: (e) => onClick(village, e),
       }}
     />
