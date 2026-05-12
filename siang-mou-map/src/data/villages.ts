@@ -78,14 +78,17 @@ export const villages: Village[] = [
     mou: { signedOn: '3rd March 2026', households: 86, agreedForPFR: 74, percentAgreed: 86.0 } },
 ];
 
-// District bounding boxes for Leaflet flyToBounds
-// [southWest, northEast] in [lat, lng]
-// Computed from min/max of pin coords + ~0.03° padding to keep pins prominent
-// while still showing district outline as context.
+// District bounding boxes for Leaflet flyToBounds — [southWest, northEast] in [lat, lng].
 //
-// Siang pin bbox:       lat 28.3258 → 28.5195, lng 94.8900 → 95.1077
-// Upper Siang pin bbox: lat 28.4838 → 28.9686, lng 94.7529 → 95.1111
+// Now fitted to the actual district polygon extent (~0.04° padding) so every
+// non-PFR location label is visible on screen by default, mirroring the
+// printed map's whole-district view. PFR pins remain visually dominant via
+// their colored chips and z-layering even at this zoom level.
+//
+// Polygon extents (from public/geo/district-*.geojson):
+//   Siang:       lat 28.028 → 28.980, lng 94.368 → 95.224
+//   Upper Siang: lat 28.161 → 29.348, lng 94.225 → 95.411
 export const DISTRICT_BOUNDS: Record<District, [[number, number], [number, number]]> = {
-  'siang':       [[28.296, 94.860], [28.550, 95.138]],
-  'upper-siang': [[28.454, 94.723], [28.999, 95.141]],
+  'siang':       [[27.99, 94.33], [29.02, 95.26]],
+  'upper-siang': [[28.12, 94.19], [29.39, 95.45]],
 };
