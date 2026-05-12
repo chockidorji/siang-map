@@ -22,34 +22,23 @@ function FlyTo({ district }: { district: District }) {
   lastDistrict.current = district;
 
   useEffect(() => {
+    // Call synchronously — both rAF and setTimeout are throttled when the
+    // browser tab isn't focused (Chrome's background throttling), which
+    // meant the fitBounds never fired on tab switches during dev. React's
+    // useEffect already runs after layout, so the container has its size.
+    map.invalidateSize({ animate: false });
     const FIT_OPTS = { padding: [20, 20] as [number, number] };
-    let cancelled = false;
-
-    const apply = () => {
-      if (cancelled) return;
-      map.invalidateSize({ animate: false });
-      const bounds = DISTRICT_BOUNDS[district];
-      if (seen.current === null) {
-        map.fitBounds(bounds, FIT_OPTS);
-      } else {
-        map.flyToBounds(bounds, {
-          ...FIT_OPTS,
-          duration: 0.8,
-          easeLinearity: 0.25,
-        });
-      }
-      seen.current = district;
-    };
-
-    // Run after layout (rAF) AND after fonts/styles settle (small timeout).
-    const r1 = requestAnimationFrame(() => {
-      setTimeout(apply, 80);
-    });
-
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(r1);
-    };
+    const bounds = DISTRICT_BOUNDS[district];
+    if (seen.current === null) {
+      map.fitBounds(bounds, FIT_OPTS);
+    } else {
+      map.flyToBounds(bounds, {
+        ...FIT_OPTS,
+        duration: 0.8,
+        easeLinearity: 0.25,
+      });
+    }
+    seen.current = district;
   }, [district, map]);
 
   // Re-fit on window resize so re-flowed canvas stays correct.
