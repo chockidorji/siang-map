@@ -4,10 +4,27 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
 import VillageTooltip from './VillageTooltip';
+import LocationLabel from './LocationLabel';
 import { villages, DISTRICT_BOUNDS, type District, type Village } from '../data/villages';
+import { mapLocations } from '../data/locations';
 
 interface Props {
   district: District;
+}
+
+// Creates a dedicated Leaflet pane for the non-PFR text labels at zIndex 550
+// — below the marker pane (600) so PFR pins always paint on top of the
+// typography. Has to live inside MapContainer so it has access to the map.
+function LabelPaneInit() {
+  const map = useMap();
+  useEffect(() => {
+    if (!map.getPane('labelPane')) {
+      const pane = map.createPane('labelPane');
+      pane.style.zIndex = '550';
+      pane.style.pointerEvents = 'none';
+    }
+  }, [map]);
+  return null;
 }
 
 // On every district change: invalidateSize so Leaflet picks up the actual
@@ -144,6 +161,14 @@ export default function DistrictMap({ district }: Props) {
     [district],
   );
 
+  // Non-PFR text labels (no pin) — admin HQs and other settlements from the
+  // SHP. Always rendered behind the village pins so the PFR data stays the
+  // visual focus.
+  const filteredLabels = useMemo(
+    () => mapLocations.filter((l) => l.district === district),
+    [district],
+  );
+
   const placements = useMemo(() => computePlacements(filteredVillages), [filteredVillages]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -203,6 +228,7 @@ export default function DistrictMap({ district }: Props) {
         ref={mapRef}
       >
         <FlyTo district={district} />
+        <LabelPaneInit />
 
         {districtGeo.data && (
           <GeoJSON
@@ -225,6 +251,14 @@ export default function DistrictMap({ district }: Props) {
             style={{ color: '#2563EB', weight: 2 }}
           />
         )}
+
+        {/* Non-PFR text labels — each Marker renders into the dedicated
+            labelPane (created above by LabelPaneInit, zIndex 550) which sits
+            below the marker pane (600). PFR pins therefore always paint on
+            top of the typography layer no matter how dense it gets. */}
+        {filteredLabels.map((loc) => (
+          <LocationLabel key={loc.id} location={loc} />
+        ))}
 
         {filteredVillages.map((v) => (
           <VillagePin

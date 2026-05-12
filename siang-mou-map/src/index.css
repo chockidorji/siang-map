@@ -50,3 +50,28 @@ body {
     0 0 2px #fff,
     0 0 2px #fff;
 }
+
+/* Text-only location labels (no pin, no chip — pure typography).
+   - centre the text on the actual lat/lng via translate
+   - thick white halo so the name stays readable over rivers, drainage,
+     and the cream district fill
+   - pointer-events: none so the labels never intercept a pin click */
+.location-label {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1.05;
+  text-shadow:
+    -1px -1px 0 #fff,
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff,
+     0   -1px 0 #fff,
+     0    1px 0 #fff,
+    -1px  0   0 #fff,
+     1px  0   0 #fff,
+     0    0   3px rgba(255, 255, 255, 0.9);
+}
