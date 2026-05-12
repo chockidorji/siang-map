@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
 import VillageTooltip from './VillageTooltip';
 import LocationLabel from './LocationLabel';
+import Legend from './Legend';
 import { villages, DISTRICT_BOUNDS, type District, type Village } from '../data/villages';
 import { mapLocations } from '../data/locations';
 
@@ -200,6 +201,9 @@ export default function DistrictMap({ district }: Props) {
   const mapRef = useRef<L.Map | null>(null);
 
   const [active, setActive] = useState<Village | null>(null);
+  // Legend is open by default — most viewers benefit from it once. After
+  // they collapse it, the choice persists across district switches.
+  const [legendCollapsed, setLegendCollapsed] = useState<boolean>(false);
 
   function handleClick(village: Village) {
     // Clicking the same pin again closes the drawer.
@@ -299,6 +303,11 @@ export default function DistrictMap({ district }: Props) {
       </MapContainer>
 
       <LayerStatusBanner failed={failedLayers} />
+
+      <Legend
+        collapsed={legendCollapsed}
+        onToggle={() => setLegendCollapsed((c) => !c)}
+      />
 
       {active && (
         <VillageTooltip village={active} onDismiss={() => setActive(null)} />
