@@ -2,7 +2,7 @@ import { Marker } from 'react-leaflet';
 import L from 'leaflet';
 import type { Village } from '../data/villages';
 
-export type LabelPlacement = 'below' | 'above';
+export type LabelPlacement = 'below' | 'above' | 'right' | 'left';
 
 interface Props {
   village: Village;
@@ -76,12 +76,18 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
     ? '<span class="absolute -top-[3px] -right-[3px] text-amber-500 text-[10px] leading-none" style="text-shadow: 0 0 2px white, 0 0 2px white;">★</span>'
     : '';
 
-  // Chip clears the icon by 2px ('below' = under the stem tip, 'above' =
-  // above the head). Hardcoded so Tailwind's JIT can see the class.
-  const chipPos =
-    placement === 'above'
-      ? 'left-1/2 bottom-[24px] -translate-x-1/2'
-      : 'left-1/2 top-[24px] -translate-x-1/2';
+  // Chip clears the icon by ~4 px so it doesn't touch the pin head/stem.
+  // Hardcoded class strings so Tailwind's JIT picks them up.
+  //   below : default — under the stem tip
+  //   above : above the head
+  //   right : to the right of the head, vertically centred on the ball
+  //   left  : to the left of the head, vertically centred on the ball
+  const chipPos = {
+    above: 'left-1/2 bottom-[24px] -translate-x-1/2',
+    below: 'left-1/2 top-[24px] -translate-x-1/2',
+    right: 'left-[18px] top-[6px] -translate-y-1/2',
+    left:  'right-[18px] top-[6px] -translate-y-1/2',
+  }[placement];
 
   return L.divIcon({
     className: '',

@@ -133,26 +133,43 @@ function useGeoJson(path: string): GeoState {
 }
 
 // --- Dense-label placement ---------------------------------------------------
-// Greedy: walk pins in stable order; for each pin, if any already-placed pin
-// within ~0.025° (degrees ≈ a couple kilometres at this latitude) has its
-// label below, flip this pin's label above. Reduces overlap in tight clusters
-// without changing the always-visible-label intent.
+// Greedy 4-direction placement for the always-visible PFR pin chips. For each
+// pin (in stable order), pick the placement direction that minimises taken
+// neighbours within ~0.025° (a couple km at this latitude). The previous pass
+// only flipped between below/above, which left 3+ pin clusters (Mosing/Miging/
+// Palling, Resing/Singging/Angging) with stacked chips. Including right/left
+// gives the algorithm two more escape routes and the dense clusters reliably
+// fan out.
 function computePlacements(list: Village[]): Map<string, LabelPlacement> {
   const out = new Map<string, LabelPlacement>();
   const THRESHOLD = 0.025;
+  // Order chosen so the most visually balanced placement wins ties.
+  const CANDIDATES: LabelPlacement[] = ['below', 'above', 'right', 'left'];
+
   for (const v of list) {
-    let placement: LabelPlacement = 'below';
+    // Count how many already-placed neighbours within THRESHOLD already
+    // claim each candidate direction. Pick the candidate with the fewest
+    // conflicts (ties broken by the CANDIDATES order so 'below' stays the
+    // default for isolated pins).
+    const conflicts: Record<LabelPlacement, number> = { below: 0, above: 0, right: 0, left: 0 };
     for (const [otherId, otherPlacement] of out) {
       const other = list.find((x) => x.id === otherId)!;
       const dLat = v.lat - other.lat;
-      // longitude scaled by cos(lat) so we get roughly equal-distance units.
+      // Scale longitude by cos(lat) so distances are roughly equal-units.
       const dLng = (v.lng - other.lng) * Math.cos((v.lat * Math.PI) / 180);
-      const dist = Math.hypot(dLat, dLng);
-      if (dist < THRESHOLD && otherPlacement === placement) {
-        placement = placement === 'below' ? 'above' : 'below';
+      if (Math.hypot(dLat, dLng) < THRESHOLD) {
+        conflicts[otherPlacement] += 1;
       }
     }
-    out.set(v.id, placement);
+    let best: LabelPlacement = 'below';
+    let bestScore = Number.POSITIVE_INFINITY;
+    for (const c of CANDIDATES) {
+      if (conflicts[c] < bestScore) {
+        bestScore = conflicts[c];
+        best = c;
+      }
+    }
+    out.set(v.id, best);
   }
   return out;
 }
