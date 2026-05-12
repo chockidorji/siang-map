@@ -84,6 +84,11 @@ export default function Legend({ collapsed, onToggle }: Props) {
               Settlement
             </div>
           </div>
+
+          {/* Discovery hint — clicking a pin isn't obvious otherwise. */}
+          <div className="mt-2 border-t border-gray-100 pt-1.5 text-[9px] italic text-gray-400">
+            Click any pin for MoU details
+          </div>
         </>
       )}
     </aside>
