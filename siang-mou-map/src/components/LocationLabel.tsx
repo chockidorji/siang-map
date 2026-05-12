@@ -59,6 +59,11 @@ function buildIcon(location: MapLocation): L.DivIcon {
 }
 
 export default function LocationLabel({ location }: Props) {
+  // District-HQ labels go into the elevated `districtHqPane` (zIndex 680)
+  // so they paint over any PFR pin chip that happens to share a screen
+  // position at the whole-district zoom. Everything else stays below the
+  // marker pane in `labelPane` (550).
+  const pane = location.tier === 'district-hq' ? 'districtHqPane' : 'labelPane';
   return (
     <Marker
       position={[location.lat, location.lng]}
@@ -67,7 +72,7 @@ export default function LocationLabel({ location }: Props) {
       // the PFR pins.
       interactive={false}
       keyboard={false}
-      pane="labelPane"
+      pane={pane}
       zIndexOffset={zOffsetFor(location.tier)}
     />
   );

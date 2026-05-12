@@ -12,14 +12,19 @@ interface Props {
   district: District;
 }
 
-// Creates a dedicated Leaflet pane for the non-PFR text labels at zIndex 550
-// — below the marker pane (600) so PFR pins always paint on top of the
-// typography. Has to live inside MapContainer so it has access to the map.
+// Creates two Leaflet panes for the non-PFR text labels:
+//   labelPane          (zIndex 550, below marker pane)  — ADC / Circle / EAC / settlements
+//   districtHqPane     (zIndex 680, above marker pane)  — Yingkiong, Boleng only
 //
-// Also toggles a `labelpane-zoomed-out` class on the pane whenever the user
-// zooms below SETTLEMENT_REVEAL_ZOOM. CSS then fades the settlement tier so
-// the HQ hierarchy reads cleanly at the whole-district view; settlements
-// return to full presence as the user zooms in.
+// District HQ labels (just two of them, the two seats of administration)
+// paint over PFR pin chips so their bold-uppercase typography stays readable
+// at the whole-district zoom even when a PFR pin happens to sit at the same
+// screen position. The chip background is opaque white, so black-bold text
+// reading over it is still clear.
+//
+// LabelPaneInit also toggles `labelpane-zoomed-out` on the main label pane
+// whenever the user drops below SETTLEMENT_REVEAL_ZOOM — CSS then fades the
+// settlement tier so the HQ hierarchy reads cleanly.
 const SETTLEMENT_REVEAL_ZOOM = 10;
 function LabelPaneInit() {
   const map = useMap();
@@ -29,6 +34,11 @@ function LabelPaneInit() {
       pane = map.createPane('labelPane');
       pane.style.zIndex = '550';
       pane.style.pointerEvents = 'none';
+    }
+    if (!map.getPane('districtHqPane')) {
+      const top = map.createPane('districtHqPane');
+      top.style.zIndex = '680';
+      top.style.pointerEvents = 'none';
     }
     const apply = () => {
       pane!.classList.toggle('labelpane-zoomed-out', map.getZoom() < SETTLEMENT_REVEAL_ZOOM);
