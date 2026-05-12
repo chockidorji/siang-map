@@ -77,6 +77,19 @@ body {
   transition: opacity 200ms ease;
 }
 
+/* Leaflet scale bar — restyle to match the rest of the UI (white surface,
+   thin grey border, tabular numerals) instead of Leaflet's default. */
+.leaflet-control-scale-line {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-top: none !important;
+  color: #334155 !important;
+  font: 500 10px/1.4 'Inter', system-ui, sans-serif !important;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
 /* At the whole-district zoom level, settlements would crowd the HQ tier.
    `labelpane-zoomed-out` is toggled by LabelPaneInit when the user zooms
    below SETTLEMENT_REVEAL_ZOOM — we fade settlements back (still visible,

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, GeoJSON, ScaleControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
@@ -244,6 +244,9 @@ export default function DistrictMap({ district }: Props) {
       >
         <FlyTo district={district} />
         <LabelPaneInit />
+        {/* Cartographic scale bar — useful for orienting the audience on the
+            actual size of the district. Metric only, bottom-left. */}
+        <ScaleControl position="bottomleft" imperial={false} maxWidth={120} />
 
         {districtGeo.data && (
           <GeoJSON
