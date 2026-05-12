@@ -59,7 +59,15 @@ type GeoData = GeoJSON.FeatureCollection | null;
 function useGeoJson(path: string): GeoData {
   const [data, setData] = useState<GeoData>(null);
   useEffect(() => {
-    fetch(path).then(r => r.json()).then(setData).catch(() => setData(null));
+    // Reset to null so the GeoJSON layer doesn't briefly show stale data
+    // from the previous district while the new file fetches.
+    setData(null);
+    let alive = true;
+    fetch(path)
+      .then(r => r.json())
+      .then(d => { if (alive) setData(d); })
+      .catch(() => { if (alive) setData(null); });
+    return () => { alive = false; };
   }, [path]);
   return data;
 }
