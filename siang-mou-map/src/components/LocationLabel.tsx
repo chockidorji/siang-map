@@ -52,7 +52,9 @@ function buildIcon(location: MapLocation): L.DivIcon {
     className: '',
     iconSize: [0, 0],
     iconAnchor: [0, 0],
-    html: `<span class="location-label ${classesFor(location.tier)}" aria-hidden="true">${safeName}</span>`,
+    // The `location-label-{tier}` class lets the labelPane fade out a tier
+    // based on the current zoom (see .labelpane-zoomed-out rules in CSS).
+    html: `<span class="location-label location-label-${location.tier} ${classesFor(location.tier)}" aria-hidden="true">${safeName}</span>`,
   });
 }
 

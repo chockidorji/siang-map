@@ -74,4 +74,18 @@ body {
     -1px  0   0 #fff,
      1px  0   0 #fff,
      0    0   3px rgba(255, 255, 255, 0.9);
+  transition: opacity 200ms ease;
+}
+
+/* At the whole-district zoom level, settlements would crowd the HQ tier.
+   `labelpane-zoomed-out` is toggled by LabelPaneInit when the user zooms
+   below SETTLEMENT_REVEAL_ZOOM — we fade settlements back (still visible,
+   still readable on hover-investigation, but recessive) and pop them back
+   to full presence as the user zooms in. The HQ tiers are unaffected so
+   the administrative hierarchy stays sharp at every zoom level. */
+.labelpane-zoomed-out .location-label-settlement {
+  opacity: 0.45;
+}
+.labelpane-zoomed-out .location-label-circle-eac {
+  opacity: 0.85;
 }

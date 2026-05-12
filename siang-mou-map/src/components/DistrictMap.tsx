@@ -15,14 +15,29 @@ interface Props {
 // Creates a dedicated Leaflet pane for the non-PFR text labels at zIndex 550
 // — below the marker pane (600) so PFR pins always paint on top of the
 // typography. Has to live inside MapContainer so it has access to the map.
+//
+// Also toggles a `labelpane-zoomed-out` class on the pane whenever the user
+// zooms below SETTLEMENT_REVEAL_ZOOM. CSS then fades the settlement tier so
+// the HQ hierarchy reads cleanly at the whole-district view; settlements
+// return to full presence as the user zooms in.
+const SETTLEMENT_REVEAL_ZOOM = 10;
 function LabelPaneInit() {
   const map = useMap();
   useEffect(() => {
-    if (!map.getPane('labelPane')) {
-      const pane = map.createPane('labelPane');
+    let pane = map.getPane('labelPane');
+    if (!pane) {
+      pane = map.createPane('labelPane');
       pane.style.zIndex = '550';
       pane.style.pointerEvents = 'none';
     }
+    const apply = () => {
+      pane!.classList.toggle('labelpane-zoomed-out', map.getZoom() < SETTLEMENT_REVEAL_ZOOM);
+    };
+    apply();
+    map.on('zoomend', apply);
+    return () => {
+      map.off('zoomend', apply);
+    };
   }, [map]);
   return null;
 }
