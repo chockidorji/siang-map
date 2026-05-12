@@ -80,8 +80,12 @@ export const villages: Village[] = [
 
 // District bounding boxes for Leaflet flyToBounds
 // [southWest, northEast] in [lat, lng]
-// Computed from min/max of final pin coords, padded out a bit.
+// Computed from min/max of pin coords + ~0.03° padding to keep pins prominent
+// while still showing district outline as context.
+//
+// Siang pin bbox:       lat 28.3258 → 28.5195, lng 94.8900 → 95.1077
+// Upper Siang pin bbox: lat 28.4838 → 28.9686, lng 94.7529 → 95.1111
 export const DISTRICT_BOUNDS: Record<District, [[number, number], [number, number]]> = {
-  'siang':       [[28.30, 94.85], [28.55, 95.15]],
-  'upper-siang': [[28.45, 94.70], [29.00, 95.15]],
+  'siang':       [[28.296, 94.860], [28.550, 95.138]],
+  'upper-siang': [[28.454, 94.723], [28.999, 95.141]],
 };

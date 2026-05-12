@@ -10,15 +10,58 @@ interface Props {
   district: District;
 }
 
+// On every district change: invalidateSize so Leaflet picks up the actual
+// container height (flex children frequently report 0 at mount), then fit
+// bounds. First time uses an instant snap; subsequent tab switches animate.
+// Also re-fits on container resize so the view stays centered if the user
+// changes the window size mid-presentation.
 function FlyTo({ district }: { district: District }) {
   const map = useMap();
+  const seen = useRef<District | null>(null);
+  const lastDistrict = useRef<District>(district);
+  lastDistrict.current = district;
+
   useEffect(() => {
-    map.flyToBounds(DISTRICT_BOUNDS[district], {
-      duration: 0.8,
-      easeLinearity: 0.25,
-      padding: [40, 40],
+    const FIT_OPTS = { padding: [20, 20] as [number, number] };
+    let cancelled = false;
+
+    const apply = () => {
+      if (cancelled) return;
+      map.invalidateSize({ animate: false });
+      const bounds = DISTRICT_BOUNDS[district];
+      if (seen.current === null) {
+        map.fitBounds(bounds, FIT_OPTS);
+      } else {
+        map.flyToBounds(bounds, {
+          ...FIT_OPTS,
+          duration: 0.8,
+          easeLinearity: 0.25,
+        });
+      }
+      seen.current = district;
+    };
+
+    // Run after layout (rAF) AND after fonts/styles settle (small timeout).
+    const r1 = requestAnimationFrame(() => {
+      setTimeout(apply, 80);
     });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(r1);
+    };
   }, [district, map]);
+
+  // Re-fit on window resize so re-flowed canvas stays correct.
+  useEffect(() => {
+    const onResize = () => {
+      map.invalidateSize({ animate: false });
+      map.fitBounds(DISTRICT_BOUNDS[lastDistrict.current], { padding: [20, 20] });
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [map]);
+
   return null;
 }
 
@@ -59,9 +102,11 @@ export default function DistrictMap({ district }: Props) {
     <div ref={containerRef} className="relative h-full w-full bg-white">
       <MapContainer
         bounds={DISTRICT_BOUNDS[district]}
-        boundsOptions={{ padding: [40, 40] }}
+        boundsOptions={{ padding: [20, 20] }}
         scrollWheelZoom
         zoomControl
+        zoomSnap={0.25}
+        zoomDelta={0.25}
         attributionControl={false}
         className="h-full w-full"
         ref={(m) => { if (m) mapRef.current = m; }}
