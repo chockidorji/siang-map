@@ -24,3 +24,23 @@ body {
    district shapefile blends with the page (the design has no basemap tiles).
    leaflet.css is imported after this file, so we need higher specificity. */
 .leaflet-container.leaflet-container { background: #FFFFFF; }
+
+/* Markers are keyboard-focusable (Leaflet `keyboard: true`). Make the focus
+   ring visible so a presenter using Tab can see which pin is active. */
+.leaflet-marker-icon:focus,
+.leaflet-marker-icon:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 3px;
+  border-radius: 9999px;
+}
+
+/* Strengthen the always-visible village name chip so it stays readable when
+   pins cluster tightly. The double drop-shadow (white halo + grey shadow)
+   gives separation when chips overlap. The text-shadow gives a subtle outline
+   for the same reason. */
+.village-chip {
+  text-shadow:
+    0 0 2px #fff,
+    0 0 2px #fff,
+    0 0 2px #fff;
+}
