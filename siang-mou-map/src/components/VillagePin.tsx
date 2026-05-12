@@ -39,49 +39,54 @@ function ariaLabel(v: Village): string {
 }
 
 const PIN_W = 22;
-const PIN_H = 30;
+const PIN_H = 32;
+const STICK_COLOUR = '#475569'; // slate-600 — the needle/stem of the push-pin
 
 function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
   const is100 = village.mou.percentAgreed === 100;
   const colour = pinColour(village);
   const approx = village.isApproximate;
 
-  // SVG map-pin (teardrop). 24×32 viewBox; tip at (12, 32). Material-style.
-  // Verified  : solid fill, white inner dot, soft drop-shadow.
-  // Approximate: white fill, dashed stroke in the village colour, inner dot
-  //              also in the colour — keeps the "this is an estimate" visual
-  //              language that the old dashed ring established.
-  const pinSvg = approx
-    ? `
-      <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 24 32" style="display:block;">
-        <path d="M12 1 C5.9 1 1 5.9 1 12 c0 8.3 11 19 11 19 s11-10.7 11-19 c0-6.1-4.9-11-11-11 z"
-              fill="white" stroke="${colour}" stroke-width="1.8" stroke-dasharray="3 2"/>
-        <circle cx="12" cy="12" r="3" fill="${colour}"/>
-      </svg>`
-    : `
-      <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 24 32"
-           style="display:block; filter: drop-shadow(0 1px 1.5px rgba(0,0,0,0.35));">
-        <path d="M12 1 C5.9 1 1 5.9 1 12 c0 8.3 11 19 11 19 s11-10.7 11-19 c0-6.1-4.9-11-11-11 z"
-              fill="${colour}" stroke="white" stroke-width="1.5"/>
-        <circle cx="12" cy="12" r="3.4" fill="white"/>
-      </svg>`;
+  // Push-pin marker: round head (the "ball") on top of a thin slate stem,
+  // tip of the stem sits at the actual lat/lng.
+  //
+  // 22×32 viewBox layout:
+  //   - ball     : circle (cx 11, cy 11, r 10)
+  //   - highlight: small lighter spot at (7, 7) — gives the head a glossy
+  //                feel and matches the reference marker.
+  //   - stem     : 2px-wide line from (11, 21) to (11, 31).
+  //
+  // Verified pins use a solid ball with the highlight; approximate pins
+  // get a hollow ball with a dashed stroke in the village colour plus a
+  // small inner dot, so the "this is an estimate" language is preserved.
+  const ball = approx
+    ? `<circle cx="11" cy="11" r="10" fill="white" stroke="${colour}" stroke-width="1.8" stroke-dasharray="3 2"/>
+       <circle cx="11" cy="11" r="3.2" fill="${colour}"/>`
+    : `<circle cx="11" cy="11" r="10" fill="${colour}"/>
+       <ellipse cx="7" cy="7" rx="2.6" ry="1.8" fill="white" opacity="0.42"/>`;
+
+  const pinSvg = `
+    <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 22 32"
+         style="display:block; filter: drop-shadow(0 1.5px 1.5px rgba(0,0,0,0.35));">
+      <line x1="11" y1="21" x2="11" y2="31" stroke="${STICK_COLOUR}" stroke-width="2" stroke-linecap="round"/>
+      ${ball}
+    </svg>`;
 
   const star = is100
     ? '<span class="absolute -top-1 -right-1 text-amber-500 text-[13px] leading-none" style="text-shadow: 0 0 2px white, 0 0 2px white;">★</span>'
     : '';
 
-  // Anchor chip just outside the pin: 2px clear of the bottom tip ('below')
-  // or top of the teardrop ('above'). Values hardcoded because Tailwind
-  // can't see interpolated class strings.
+  // Chip clears the icon by 2px ('below' = under the stem tip, 'above' =
+  // above the ball). Hardcoded so Tailwind's JIT can see the class.
   const chipPos =
     placement === 'above'
-      ? 'left-1/2 bottom-[32px] -translate-x-1/2'
-      : 'left-1/2 top-[32px] -translate-x-1/2';
+      ? 'left-1/2 bottom-[34px] -translate-x-1/2'
+      : 'left-1/2 top-[34px] -translate-x-1/2';
 
   return L.divIcon({
     className: '',
     iconSize: [PIN_W, PIN_H],
-    iconAnchor: [PIN_W / 2, PIN_H], // bottom-center = pin tip = actual lat/lng
+    iconAnchor: [PIN_W / 2, PIN_H], // bottom-center = stem tip = actual lat/lng
     html: `
       <div class="relative" style="width:${PIN_W}px;height:${PIN_H}px;" role="img" aria-label="${ariaLabel(village).replace(/"/g, '&quot;')}">
         ${pinSvg}
