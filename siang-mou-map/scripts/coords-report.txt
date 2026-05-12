@@ -1,0 +1,26 @@
+Komkar                 | Komkar                       | SETTLEMENT | startsWith | 28.483800, 95.111100
+Karko                  | Karko                        | SETTLEMENT | exact      | 28.568795, 95.056778
+Simong                 | Simong                       | SETTLEMENT | exact      | 28.602500, 95.069440
+Pugging                | Pugging                      | SETTLEMENT | exact      | 28.742530, 94.934200
+Ramsing                | Ramsing                      | SETTLEMENT | exact      | 28.662951, 94.990293
+Janbo                  | Janbo                        | SETTLEMENT | exact      | 28.795784, 94.859209
+Bomdo                  | Bomdo                        | SETTLEMENT | exact      | 28.753074, 94.897653
+Likor                  | Likor                        | SETTLEMENT | exact      | 28.826674, 94.895337
+Mosing                 | --- NO MATCH ---
+Miging                 | Migging                      | IMPORTANT  | exact      | 28.852783, 94.772602
+Ngaming                | Ngaming                      | SETTLEMENT | exact      | 28.968627, 94.937656
+Pango                  | Pango                        | SETTLEMENT | exact      | 28.887785, 94.752884
+Ninging                | --- NO MATCH ---
+Angging                | Angging                      | SETTLEMENT | exact      | 28.933953, 94.826368
+Singging               | --- NO MATCH ---
+Resing                 | --- NO MATCH ---
+Palling                | Palling                      | IMPORTANT  | exact      | 28.836530, 94.808875
+Pangkang Kumku         | Kumku                        | SETTLEMENT | exact      | 28.436273, 95.107728
+Riga                   | Riga                         | IMPORTANT  | exact      | 28.434147, 95.043929
+Riew                   | Riew                         | SETTLEMENT | exact      | 28.331100, 95.055957
+Begging                | Begging                      | SETTLEMENT | exact      | 28.325827, 95.006730
+Parong Rongku          | Parong                       | SETTLEMENT | exact      | 28.350995, 95.021651
+Sitang                 | Sitang                       | SETTLEMENT | exact      | 28.384261, 95.057101
+Dite Dime              | Dite Dime                    | SETTLEMENT | exact      | 28.358272, 95.061498
+Haleng                 | --- NO MATCH ---
+Pangkang Jorkong       | Pangkang Kumku Jorkong       | SETTLEMENT | exact      | 28.519470, 95.066185

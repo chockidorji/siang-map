@@ -1,0 +1,19 @@
+{"type":"FeatureCollection", "features": [
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.02713098225624,28.64364938679364]},"properties":{"Location":"YINGKIONG","Desc_":"District HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.9534265391196,28.321492959240604]},"properties":{"Location":"BOLENG","Desc_":"District HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.77260164195755,28.852782853146767]},"properties":{"Location":"Migging","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.80887542466236,28.836530249300782]},"properties":{"Location":"Palling","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.16402565735956,28.310775087367535]},"properties":{"Location":"Katan","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.65484548646033,28.582256531320866]},"properties":{"Location":"Payum","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.81470693165429,28.22828815074953]},"properties":{"Location":"Jomlu Mobuk","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.16485388399953,28.832353186054846]},"properties":{"Location":"Singa","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.97872522040825,29.135035321419252]},"properties":{"Location":"Gelling","Desc_":"Circle HQ."}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.08850439845196,28.42398383475335]},"properties":{"Location":"Geku","Desc_":"EAC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.04392856158717,28.434147076781965]},"properties":{"Location":"Riga","Desc_":"EAC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.67895338328022,28.414377557829816]},"properties":{"Location":"Kaying","Desc_":"EAC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.05700084657475,28.56871019166132]},"properties":{"Location":"Jengging","Desc_":"EAC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.89111190587516,28.99449045235414]},"properties":{"Location":"Tuting","Desc_":"ADC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[95.21393622515149,28.49111326679202]},"properties":{"Location":"Mariyang","Desc_":"ADC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.88628278430468,28.31194105806015]},"properties":{"Location":"Rumgong","Desc_":"ADC"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[94.99651112513305,28.21407951326461]},"properties":{"Location":"Pangin","Desc_":"EAC"}}
+]}
