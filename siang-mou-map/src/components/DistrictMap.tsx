@@ -46,7 +46,7 @@ export default function DistrictMap({ district }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const [hover, setHover] = useState<{ village: Village; x: number; y: number } | null>(null);
 
-  function handleHover(village: Village | null, e?: L.LeafletMouseEvent) {
+  function handleHover(village: Village | null, _e?: L.LeafletMouseEvent) {
     if (!village || !mapRef.current) {
       setHover(null);
       return;
