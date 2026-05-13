@@ -23,6 +23,7 @@ export default function DetailPanel({ village, districtName }: Props) {
   return (
     <aside
       style={{
+        height: '100%',
         borderLeft: '1px solid var(--hairline)',
         padding: '24px 40px 24px 28px',
         overflow: 'auto',

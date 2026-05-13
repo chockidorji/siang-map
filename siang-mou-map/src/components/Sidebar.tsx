@@ -64,6 +64,7 @@ export default function Sidebar({
     <aside
       className="flex flex-col overflow-hidden border-r"
       style={{
+        height: '100%',
         borderColor: 'var(--hairline)',
         padding: '24px 24px 24px 40px',
         gap: 18,
