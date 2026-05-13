@@ -113,9 +113,9 @@ function buildIcon(village: Village, placement: LabelPlacement, selected: boolea
         <div class="village-chip absolute ${chipPos} pointer-events-none whitespace-nowrap
                     px-1.5 py-[1px] text-[11px]"
              style="font-family: var(--font-serif); font-weight: ${selected ? 600 : 500};
-                    color: var(--ink); background: rgba(250,247,240,0.92);
+                    color: var(--ink); background: rgba(255,255,255,0.92);
                     border: 0.5px solid var(--hairline-soft); letter-spacing: 0.005em;
-                    text-shadow: 0 0 2px #faf7f0, 0 0 2px #faf7f0;">
+                    text-shadow: 0 0 2px #ffffff, 0 0 2px #ffffff;">
           ${village.name}
         </div>
       </div>
