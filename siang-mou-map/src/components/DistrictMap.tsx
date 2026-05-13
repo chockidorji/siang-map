@@ -27,9 +27,9 @@ function FlyTo({ district }: { district: District }) {
       map.invalidateSize({ animate: false });
       const bounds = DISTRICT_BOUNDS[district];
       if (seen.current === null) {
-        map.fitBounds(bounds, { padding: [20, 20] });
+        map.fitBounds(bounds, { padding: [6, 6] });
       } else {
-        map.flyToBounds(bounds, { padding: [20, 20], duration: 0.8, easeLinearity: 0.25 });
+        map.flyToBounds(bounds, { padding: [6, 6], duration: 0.8, easeLinearity: 0.25 });
       }
       seen.current = district;
     } catch (e) {
@@ -42,7 +42,7 @@ function FlyTo({ district }: { district: District }) {
     const onResize = () => {
       try {
         map.invalidateSize({ animate: false });
-        map.fitBounds(DISTRICT_BOUNDS[district], { padding: [20, 20] });
+        map.fitBounds(DISTRICT_BOUNDS[district], { padding: [6, 6] });
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error('[FlyTo] resize threw:', e);
@@ -206,7 +206,7 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
     <div className="relative h-full w-full" style={{ background: 'var(--paper)' }}>
       <MapContainer
         bounds={DISTRICT_BOUNDS[district]}
-        boundsOptions={{ padding: [20, 20] }}
+        boundsOptions={{ padding: [6, 6] as [number, number] }}
         // Scroll-wheel zoom intentionally off — presenters scrolling the page
         // were accidentally zooming the map. The +/- control remains.
         scrollWheelZoom={false}
