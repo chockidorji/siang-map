@@ -217,8 +217,9 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
           <GeoJSON
             key={`district-${district}`}
             data={districtGeo.data}
-            // Earth-tone land — paperAlt fill, ink hairline border.
-            style={{ color: '#2a2622', weight: 1.2, fillColor: '#f1ece1', fillOpacity: 1 }}
+            // Earth-tone land — paperAlt fill, ink hairline border. Keep in
+            // sync with --paper-alt in index.css.
+            style={{ color: '#2a2622', weight: 1.2, fillColor: '#f4ede0', fillOpacity: 1 }}
           />
         )}
         {drainageGeo.data && (

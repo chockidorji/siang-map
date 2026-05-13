@@ -68,11 +68,13 @@ function buildIcon(village: Village, placement: LabelPlacement, selected: boolea
     : `<circle cx="7" cy="6" r="5" fill="${colour}"/>
        <ellipse cx="5" cy="4" rx="1.5" ry="1" fill="white" opacity="0.42"/>`;
 
-  // Selected ring: dashed hairline around the pin head when the village is
-  // the active one in the sidebar/detail panel. Subtle enough to read at
-  // the whole-district zoom without dominating the map.
+  // Selected ring: solid coloured ring in the village's own PFR colour, with
+  // a soft halo behind it so the active pin reads clearly even when it sits
+  // inside a cluster. Drawn before the pin so the ball + stem still paint
+  // on top.
   const selectedRing = selected
-    ? `<circle cx="7" cy="6" r="8.5" fill="none" stroke="#1a1815" stroke-width="0.9" stroke-dasharray="1.6 1.6"/>`
+    ? `<circle cx="7" cy="6" r="10.5" fill="${colour}" opacity="0.16"/>
+       <circle cx="7" cy="6" r="8.5"  fill="none" stroke="${colour}" stroke-width="1.6"/>`
     : '';
 
   const pinSvg = `
@@ -132,6 +134,9 @@ export default function VillagePin({ village, placement = 'below', selected = fa
       keyboard
       title={ariaLabel(village)}
       alt={ariaLabel(village)}
+      // The selected village floats above every other marker and label so it
+      // never gets hidden under a neighbour in dense clusters.
+      zIndexOffset={selected ? 1000 : 0}
       eventHandlers={{
         click: (e) => onClick(village, e),
       }}

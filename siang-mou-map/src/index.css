@@ -5,8 +5,8 @@
    bright stoplight greens of the prior pass. Ported from the Claude Design
    exploration the user signed off on. */
 :root {
-  --paper: #faf7f0;
-  --paper-alt: #f1ece1;
+  --paper: #fdfbf6;
+  --paper-alt: #f4ede0;
   --ink: #1a1815;
   --hairline: #2a2622;
   --hairline-soft: rgba(26, 24, 21, 0.14);
