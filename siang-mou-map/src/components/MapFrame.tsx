@@ -89,27 +89,6 @@ export default function MapFrame({ district, districtName, children }: Props) {
           Fig. {district === 'siang' ? '2.a' : '2.b'} · District-level consent map
         </div>
 
-        {/* Compass */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 18,
-            right: 18,
-            width: 44,
-            height: 44,
-            color: 'var(--ink)',
-            opacity: 0.8,
-            pointerEvents: 'none',
-          }}
-        >
-          <Compass />
-        </div>
-
-        {/* PFR-agreement key — sits where the printed atlas places its
-            legend, inside the cartographic border at the bottom-left so a
-            cold viewer reads the pin colours without having to glance over
-            to the sidebar. */}
-        <KeyBlock />
       </div>
 
       {/* The actual map sits below the chrome */}
@@ -121,6 +100,32 @@ export default function MapFrame({ district, districtName, children }: Props) {
         }}
       >
         {children}
+      </div>
+
+      {/* Overlays painted AFTER the map so they sit on top of the Leaflet
+          container's white background. Compass + key both live here. */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: '32px',
+          pointerEvents: 'none',
+          zIndex: 10,
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 18,
+            right: 18,
+            width: 44,
+            height: 44,
+            color: 'var(--ink)',
+            opacity: 0.8,
+          }}
+        >
+          <Compass />
+        </div>
+        <KeyBlock />
       </div>
     </main>
   );
