@@ -7,6 +7,19 @@ export interface MouData {
   percentAgreed: number | null;  // null when source data is inconsistent
 }
 
+// Status tier — moss/ochre/brick/stone derived from MoU agreement rate. Kept
+// as a discriminated union so the palette, filter checkboxes and detail
+// panel all read off the same key.
+export type Status = 'high' | 'mid' | 'low' | 'none';
+
+export function statusOf(v: Village): Status {
+  const p = v.mou.percentAgreed;
+  if (p === null) return 'none';
+  if (p >= 80) return 'high';
+  if (p >= 40) return 'mid';
+  return 'low';
+}
+
 export interface Village {
   id: string;
   name: string;
@@ -15,6 +28,9 @@ export interface Village {
   lng: number;
   isApproximate: boolean;
   mou: MouData;
+  /** Admin circle this village belongs to (Boleng, Singa, Riga, …). Optional —
+   *  populated where we know it from the SHP, else omitted. */
+  circle?: string;
 }
 
 // Coordinates sourced from `siang-mou-map/scripts/coords-report.txt`

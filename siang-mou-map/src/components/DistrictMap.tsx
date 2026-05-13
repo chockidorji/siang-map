@@ -1,31 +1,66 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MapContainer, GeoJSON, ScaleControl, useMap } from 'react-leaflet';
+import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
-import VillageTooltip from './VillageTooltip';
 import LocationLabel from './LocationLabel';
-import Legend from './Legend';
 import { villages, DISTRICT_BOUNDS, type District, type Village } from '../data/villages';
 import { mapLocations } from '../data/locations';
 
 interface Props {
   district: District;
+  /** Set of village IDs that should currently be rendered as pins.
+   *  Driven by the sidebar's status filters + search query. */
+  visibleVillageIds: Set<string>;
+  /** Selected village (from sidebar or pin click). */
+  selectedId: string | null;
+  onSelect: (v: Village) => void;
 }
 
-// Creates two Leaflet panes for the non-PFR text labels:
-//   labelPane          (zIndex 550, below marker pane)  — ADC / Circle / EAC / settlements
-//   districtHqPane     (zIndex 680, above marker pane)  — Yingkiong, Boleng only
-//
-// District HQ labels (just two of them, the two seats of administration)
-// paint over PFR pin chips so their bold-uppercase typography stays readable
-// at the whole-district zoom even when a PFR pin happens to sit at the same
-// screen position. The chip background is opaque white, so black-bold text
-// reading over it is still clear.
-//
-// LabelPaneInit also toggles `labelpane-zoomed-out` on the main label pane
-// whenever the user drops below SETTLEMENT_REVEAL_ZOOM — CSS then fades the
-// settlement tier so the HQ hierarchy reads cleanly.
+// Re-fit bounds on every district change so each tab fills the new
+// (polygon-sized) viewBox. Synchronous to dodge background-tab throttling.
+function FlyTo({ district }: { district: District }) {
+  const map = useMap();
+  const seen = useRef<District | null>(null);
+
+  useEffect(() => {
+    try {
+      map.invalidateSize({ animate: false });
+      const bounds = DISTRICT_BOUNDS[district];
+      if (seen.current === null) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      } else {
+        map.flyToBounds(bounds, { padding: [20, 20], duration: 0.8, easeLinearity: 0.25 });
+      }
+      seen.current = district;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[FlyTo] effect threw:', e);
+    }
+  }, [district, map]);
+
+  useEffect(() => {
+    const onResize = () => {
+      try {
+        map.invalidateSize({ animate: false });
+        map.fitBounds(DISTRICT_BOUNDS[district], { padding: [20, 20] });
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[FlyTo] resize threw:', e);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [map, district]);
+
+  return null;
+}
+
+// Custom Leaflet pane for the non-PFR text labels (zIndex 550) and a second
+// pane for district-HQ labels (zIndex 680) so YINGKIONG / BOLENG paint over
+// any PFR chip that shares their screen position. Also toggles
+// `labelpane-zoomed-out` on the label pane when the user drops below
+// SETTLEMENT_REVEAL_ZOOM — CSS fades settlements there.
 const SETTLEMENT_REVEAL_ZOOM = 10;
 function LabelPaneInit() {
   const map = useMap();
@@ -53,59 +88,12 @@ function LabelPaneInit() {
   return null;
 }
 
-// On every district change: invalidateSize so Leaflet picks up the actual
-// container height (flex children frequently report 0 at mount), then fit
-// bounds. First time uses an instant snap; subsequent tab switches animate.
-// Also re-fits on container resize so the view stays centered if the user
-// changes the window size mid-presentation.
-function FlyTo({ district }: { district: District }) {
-  const map = useMap();
-  const seen = useRef<District | null>(null);
-  const lastDistrict = useRef<District>(district);
-  lastDistrict.current = district;
-
-  useEffect(() => {
-    // Call synchronously — both rAF and setTimeout are throttled when the
-    // browser tab isn't focused (Chrome's background throttling), which
-    // meant the fitBounds never fired on tab switches during dev. React's
-    // useEffect already runs after layout, so the container has its size.
-    map.invalidateSize({ animate: false });
-    const FIT_OPTS = { padding: [20, 20] as [number, number] };
-    const bounds = DISTRICT_BOUNDS[district];
-    if (seen.current === null) {
-      map.fitBounds(bounds, FIT_OPTS);
-    } else {
-      map.flyToBounds(bounds, {
-        ...FIT_OPTS,
-        duration: 0.8,
-        easeLinearity: 0.25,
-      });
-    }
-    seen.current = district;
-  }, [district, map]);
-
-  // Re-fit on window resize so re-flowed canvas stays correct.
-  useEffect(() => {
-    const onResize = () => {
-      map.invalidateSize({ animate: false });
-      map.fitBounds(DISTRICT_BOUNDS[lastDistrict.current], { padding: [20, 20] });
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [map]);
-
-  return null;
-}
-
-// --- GeoJSON loader with error tracking --------------------------------------
 type GeoData = GeoJSON.FeatureCollection | null;
 interface GeoState { data: GeoData; error: string | null }
 
 function useGeoJson(path: string): GeoState {
   const [state, setState] = useState<GeoState>({ data: null, error: null });
   useEffect(() => {
-    // Reset to null so the GeoJSON layer doesn't briefly show stale data
-    // from the previous district while the new file fetches.
     setState({ data: null, error: null });
     let alive = true;
     fetch(path)
@@ -118,8 +106,6 @@ function useGeoJson(path: string): GeoState {
       })
       .catch((e) => {
         if (alive) {
-          // Surfaced via the LayerStatusBanner; also leave a breadcrumb in
-          // the console so the operator can see the underlying error.
           // eslint-disable-next-line no-console
           console.error(`[GeoJSON] failed to load ${path}:`, e);
           setState({ data: null, error: e?.message || 'failed to load' });
@@ -132,34 +118,18 @@ function useGeoJson(path: string): GeoState {
   return state;
 }
 
-// --- Dense-label placement ---------------------------------------------------
-// Greedy 4-direction placement for the always-visible PFR pin chips. For each
-// pin (in stable order), pick the placement direction that minimises taken
-// neighbours within ~0.025° (a couple km at this latitude). The previous pass
-// only flipped between below/above, which left 3+ pin clusters (Mosing/Miging/
-// Palling, Resing/Singging/Angging) with stacked chips. Including right/left
-// gives the algorithm two more escape routes and the dense clusters reliably
-// fan out.
+// 4-direction greedy chip placement to fan out dense PFR clusters.
 function computePlacements(list: Village[]): Map<string, LabelPlacement> {
   const out = new Map<string, LabelPlacement>();
   const THRESHOLD = 0.025;
-  // Order chosen so the most visually balanced placement wins ties.
   const CANDIDATES: LabelPlacement[] = ['below', 'above', 'right', 'left'];
-
   for (const v of list) {
-    // Count how many already-placed neighbours within THRESHOLD already
-    // claim each candidate direction. Pick the candidate with the fewest
-    // conflicts (ties broken by the CANDIDATES order so 'below' stays the
-    // default for isolated pins).
     const conflicts: Record<LabelPlacement, number> = { below: 0, above: 0, right: 0, left: 0 };
     for (const [otherId, otherPlacement] of out) {
       const other = list.find((x) => x.id === otherId)!;
       const dLat = v.lat - other.lat;
-      // Scale longitude by cos(lat) so distances are roughly equal-units.
       const dLng = (v.lng - other.lng) * Math.cos((v.lat * Math.PI) / 180);
-      if (Math.hypot(dLat, dLng) < THRESHOLD) {
-        conflicts[otherPlacement] += 1;
-      }
+      if (Math.hypot(dLat, dLng) < THRESHOLD) conflicts[otherPlacement] += 1;
     }
     let best: LabelPlacement = 'below';
     let bestScore = Number.POSITIVE_INFINITY;
@@ -174,83 +144,54 @@ function computePlacements(list: Village[]): Map<string, LabelPlacement> {
   return out;
 }
 
-// --- Operator-facing layer-load banner ---------------------------------------
 function LayerStatusBanner({ failed }: { failed: string[] }) {
   if (failed.length === 0) return null;
   return (
     <div
       role="alert"
-      className="absolute left-1/2 top-3 z-[1000] -translate-x-1/2 rounded-md border
-                 border-amber-300 bg-amber-50 px-3 py-2 text-[12px] text-amber-900
-                 shadow-md"
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: 12,
+        transform: 'translateX(-50%)',
+        zIndex: 1000,
+        border: '1px solid var(--status-mid-stroke)',
+        background: 'var(--paper-alt)',
+        color: 'var(--status-mid-stroke)',
+        padding: '6px 10px',
+        fontFamily: 'var(--font-mono)',
+        fontSize: 11,
+        letterSpacing: '0.05em',
+      }}
     >
-      <strong className="font-semibold">Map layer{failed.length > 1 ? 's' : ''} failed to load:</strong>{' '}
-      {failed.join(', ')}. The rest of the map is still usable. Try reloading the page.
+      <strong style={{ fontWeight: 600 }}>Map layer{failed.length > 1 ? 's' : ''} failed to load:</strong>{' '}
+      {failed.join(', ')}.
     </div>
   );
 }
 
-// --- Main component ---------------------------------------------------------
-// The drawer is opened only by pin click (keyboard Enter/Space on a focused
-// pin counts as a click via Leaflet's `keyboard: true`). Hover does not open
-// the drawer — it's a focused, deliberate action.
-export default function DistrictMap({ district }: Props) {
+export default function DistrictMap({ district, visibleVillageIds, selectedId, onSelect }: Props) {
   const districtGeo = useGeoJson(`/geo/district-${district}.geojson`);
   const drainageGeo = useGeoJson(`/geo/drainage-${district}.geojson`);
   const riversGeo = useGeoJson(`/geo/rivers-${district}.geojson`);
 
-  const filteredVillages = useMemo(
+  const districtVillages = useMemo(
     () => villages.filter((v) => v.district === district),
     [district],
   );
-
-  // Non-PFR text labels (no pin) — admin HQs and other settlements from the
-  // SHP. Always rendered behind the village pins so the PFR data stays the
-  // visual focus.
+  const filteredVillages = useMemo(
+    () => districtVillages.filter((v) => visibleVillageIds.has(v.id)),
+    [districtVillages, visibleVillageIds],
+  );
   const filteredLabels = useMemo(
     () => mapLocations.filter((l) => l.district === district),
     [district],
   );
+  // Compute placements over the FULL district list (not filter-narrowed) so a
+  // chip's position stays stable as the user toggles filters.
+  const placements = useMemo(() => computePlacements(districtVillages), [districtVillages]);
 
-  const placements = useMemo(() => computePlacements(filteredVillages), [filteredVillages]);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
-
-  const [active, setActive] = useState<Village | null>(null);
-  // Legend is open by default — most viewers benefit from it once. After
-  // they collapse it, the choice persists across district switches.
-  const [legendCollapsed, setLegendCollapsed] = useState<boolean>(false);
-
-  function handleClick(village: Village) {
-    // Clicking the same pin again closes the drawer.
-    setActive((prev) => (prev?.id === village.id ? null : village));
-  }
-
-  // ESC closes the drawer.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActive(null);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  // Click on the map background (not a pin) dismisses the drawer.
-  useEffect(() => {
-    const m = mapRef.current;
-    if (!m) return;
-    const onMapClick = () => setActive(null);
-    m.on('click', onMapClick);
-    return () => {
-      m.off('click', onMapClick);
-    };
-  }, [district]);
-
-  // Drop a stale card when the user changes districts.
-  useEffect(() => {
-    setActive((prev) => (prev && prev.district !== district ? null : prev));
-  }, [district]);
 
   const failedLayers = [
     districtGeo.error ? 'district outline' : null,
@@ -259,12 +200,12 @@ export default function DistrictMap({ district }: Props) {
   ].filter((x): x is string => Boolean(x));
 
   return (
-    <div ref={containerRef} className="relative h-full w-full bg-white">
+    <div className="relative h-full w-full" style={{ background: 'var(--paper)' }}>
       <MapContainer
         bounds={DISTRICT_BOUNDS[district]}
         boundsOptions={{ padding: [20, 20] }}
-        // scrollWheelZoom intentionally OFF: presenters scrolling the page
-        // were accidentally zooming the map. The +/- zoom buttons remain.
+        // Scroll-wheel zoom intentionally off — presenters scrolling the page
+        // were accidentally zooming the map. The +/- control remains.
         scrollWheelZoom={false}
         zoomControl
         zoomSnap={0.25}
@@ -275,60 +216,50 @@ export default function DistrictMap({ district }: Props) {
       >
         <FlyTo district={district} />
         <LabelPaneInit />
-        {/* Cartographic scale bar — useful for orienting the audience on the
-            actual size of the district. Metric only, bottom-left. */}
-        <ScaleControl position="bottomleft" imperial={false} maxWidth={120} />
 
         {districtGeo.data && (
           <GeoJSON
             key={`district-${district}`}
             data={districtGeo.data}
-            style={{ color: '#111827', weight: 2, fillColor: '#FFFFFF', fillOpacity: 1 }}
+            // Earth-tone land — paperAlt fill, ink hairline border.
+            style={{ color: '#2a2622', weight: 1.2, fillColor: '#f1ece1', fillOpacity: 1 }}
           />
         )}
         {drainageGeo.data && (
           <GeoJSON
             key={`drainage-${district}`}
             data={drainageGeo.data}
-            style={{ color: '#BFDBFE', weight: 1 }}
+            // Subtle muted blue for fine drainage, in the same family as the
+            // bigger rivers but quieter.
+            style={{ color: '#aac3d8', weight: 0.7, opacity: 0.7 }}
           />
         )}
         {riversGeo.data && (
           <GeoJSON
             key={`rivers-${district}`}
             data={riversGeo.data}
-            style={{ color: '#2563EB', weight: 2 }}
+            style={{ color: '#5a7fa3', weight: 1.4, opacity: 0.85 }}
           />
         )}
 
-        {/* Non-PFR text labels — each Marker renders into the dedicated
-            labelPane (created above by LabelPaneInit, zIndex 550) which sits
-            below the marker pane (600). PFR pins therefore always paint on
-            top of the typography layer no matter how dense it gets. */}
+        {/* Non-PFR text labels first */}
         {filteredLabels.map((loc) => (
           <LocationLabel key={loc.id} location={loc} />
         ))}
 
+        {/* PFR pins — filtered by sidebar */}
         {filteredVillages.map((v) => (
           <VillagePin
             key={v.id}
             village={v}
             placement={placements.get(v.id)}
-            onClick={handleClick}
+            selected={selectedId === v.id}
+            onClick={onSelect}
           />
         ))}
       </MapContainer>
 
       <LayerStatusBanner failed={failedLayers} />
-
-      <Legend
-        collapsed={legendCollapsed}
-        onToggle={() => setLegendCollapsed((c) => !c)}
-      />
-
-      {active && (
-        <VillageTooltip village={active} onDismiss={() => setActive(null)} />
-      )}
     </div>
   );
 }

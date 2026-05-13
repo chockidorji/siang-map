@@ -1,7 +1,32 @@
 @import "tailwindcss";
 
+/* Modernist Atlas palette — warm paper, deep ink, hairline rules, single accent.
+   Status colours are quiet earth tones (moss / ochre / brick / stone), not the
+   bright stoplight greens of the prior pass. Ported from the Claude Design
+   exploration the user signed off on. */
 :root {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --paper: #faf7f0;
+  --paper-alt: #f1ece1;
+  --ink: #1a1815;
+  --hairline: #2a2622;
+  --hairline-soft: rgba(26, 24, 21, 0.14);
+  --hairline-extra-soft: rgba(26, 24, 21, 0.07);
+  --accent: #1f3a5f;
+  --status-high-fill:   #3a6b4a;   /* moss */
+  --status-high-stroke: #1f3a2a;
+  --status-mid-fill:    #b07d35;   /* ochre */
+  --status-mid-stroke:  #6b4515;
+  --status-low-fill:    #a94228;   /* brick */
+  --status-low-stroke:  #5a1b0a;
+  --status-none-fill:   #8a857d;   /* stone */
+  --status-none-stroke: #3a3530;
+
+  --font-serif: 'Newsreader', 'Spectral', Georgia, serif;
+  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11', 'tnum';
 }
 
 html, body, #root {
@@ -10,9 +35,10 @@ html, body, #root {
 }
 
 body {
-  background: #FAFAFA;
-  color: #111827;
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.005em;
 }
 
 @keyframes fadeIn {
@@ -27,9 +53,9 @@ body {
 }
 
 /* Override Leaflet's default gray container bg so empty area outside the
-   district shapefile blends with the page (the design has no basemap tiles).
+   district shapefile blends with the paper background.
    leaflet.css is imported after this file, so we need higher specificity. */
-.leaflet-container.leaflet-container { background: #FFFFFF; }
+.leaflet-container.leaflet-container { background: var(--paper); }
 
 /* Markers are keyboard-focusable (Leaflet `keyboard: true`). Make the focus
    ring visible so a presenter using Tab can see which pin is active. */

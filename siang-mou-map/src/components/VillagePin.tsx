@@ -12,21 +12,24 @@ interface Props {
    * to reduce overlap.
    */
   placement?: LabelPlacement;
+  /** If true, draw a dashed ring around the pin head. Set when this is the
+   *  currently selected village in the sidebar / detail panel. */
+  selected?: boolean;
   onClick: (village: Village, event: L.LeafletMouseEvent) => void;
 }
 
-// Pin colour tracks the MoU agreement rate. Same thresholds the drawer's
-// progress bar uses (`pctTone` in VillageTooltip) so the two stay in sync.
-//   ≥ 80%  → emerald-600  (success)
-//   ≥ 40%  → orange-500   (in progress)
-//   <  40% → red-600      (low)
-//   null   → gray-500     (data inconsistent — Angging/Singging/Resing)
+// Pin colour tracks the MoU agreement rate using the Atlas earth-tone
+// palette (moss / ochre / brick / stone) instead of the bright stoplight.
+//   ≥ 80%  → moss   (high)
+//   ≥ 40%  → ochre  (mid)
+//   <  40% → brick  (low)
+//   null   → stone  (data inconsistent / no MoU)
 function pinColour(village: Village): string {
   const pct = village.mou.percentAgreed;
-  if (pct === null) return '#6B7280';
-  if (pct >= 80)    return '#059669';
-  if (pct >= 40)    return '#F97316';
-  return '#DC2626';
+  if (pct === null) return '#8a857d';
+  if (pct >= 80)    return '#3a6b4a';
+  if (pct >= 40)    return '#b07d35';
+  return '#a94228';
 }
 
 function ariaLabel(v: Village): string {
@@ -42,7 +45,7 @@ const PIN_W = 14;
 const PIN_H = 22;
 const STICK_COLOUR = '#475569'; // slate-600 — the needle/stem of the push-pin
 
-function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
+function buildIcon(village: Village, placement: LabelPlacement, selected: boolean): L.DivIcon {
   const is100 = village.mou.percentAgreed === 100;
   const colour = pinColour(village);
   const approx = village.isApproximate;
@@ -65,9 +68,17 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
     : `<circle cx="7" cy="6" r="5" fill="${colour}"/>
        <ellipse cx="5" cy="4" rx="1.5" ry="1" fill="white" opacity="0.42"/>`;
 
+  // Selected ring: dashed hairline around the pin head when the village is
+  // the active one in the sidebar/detail panel. Subtle enough to read at
+  // the whole-district zoom without dominating the map.
+  const selectedRing = selected
+    ? `<circle cx="7" cy="6" r="8.5" fill="none" stroke="#1a1815" stroke-width="0.9" stroke-dasharray="1.6 1.6"/>`
+    : '';
+
   const pinSvg = `
     <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 14 22"
-         style="display:block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35));">
+         style="display:block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); overflow:visible;">
+      ${selectedRing}
       <line x1="7" y1="11" x2="7" y2="21" stroke="${STICK_COLOUR}" stroke-width="1.5" stroke-linecap="round"/>
       ${ball}
     </svg>`;
@@ -98,9 +109,11 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
         ${pinSvg}
         ${star}
         <div class="village-chip absolute ${chipPos} pointer-events-none whitespace-nowrap
-                    rounded-md bg-white/95 px-1.5 py-[1px] text-[10px] font-medium
-                    text-gray-900 border border-gray-200
-                    shadow-[0_1px_2px_rgba(255,255,255,1),0_2px_4px_rgba(0,0,0,0.15)]">
+                    px-1.5 py-[1px] text-[11px]"
+             style="font-family: var(--font-serif); font-weight: ${selected ? 600 : 500};
+                    color: var(--ink); background: rgba(250,247,240,0.92);
+                    border: 0.5px solid var(--hairline-soft); letter-spacing: 0.005em;
+                    text-shadow: 0 0 2px #faf7f0, 0 0 2px #faf7f0;">
           ${village.name}
         </div>
       </div>
@@ -108,11 +121,11 @@ function buildIcon(village: Village, placement: LabelPlacement): L.DivIcon {
   });
 }
 
-export default function VillagePin({ village, placement = 'below', onClick }: Props) {
+export default function VillagePin({ village, placement = 'below', selected = false, onClick }: Props) {
   return (
     <Marker
       position={[village.lat, village.lng]}
-      icon={buildIcon(village, placement)}
+      icon={buildIcon(village, placement, selected)}
       // Leaflet's `keyboard` option (default true) makes the marker focusable
       // and converts Enter/Space into a click event, so wiring `click` is
       // enough to get keyboard activation for free.
