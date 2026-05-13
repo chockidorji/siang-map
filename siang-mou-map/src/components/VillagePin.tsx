@@ -33,6 +33,15 @@ function pinColour(village: Village): string {
   return '#dc2626';
 }
 
+// Darker companion stroke for the teardrop outline.
+function pinStroke(village: Village): string {
+  const pct = village.mou.percentAgreed;
+  if (pct === null) return '#1e293b';
+  if (pct >= 80)    return '#065f46';
+  if (pct >= 40)    return '#9a3412';
+  return '#7f1d1d';
+}
+
 function ariaLabel(v: Village): string {
   const pct =
     v.mou.percentAgreed === null
@@ -42,71 +51,70 @@ function ariaLabel(v: Village): string {
   return `${v.name}, MoU signed ${v.mou.signedOn}, ${v.mou.households} households, ${pct}${approx}. Press Enter for details.`;
 }
 
-const PIN_W = 14;
-const PIN_H = 22;
-const STICK_COLOUR = '#475569'; // slate-600 — the needle/stem of the push-pin
+const PIN_W = 20;
+const PIN_H = 24;
 
 function buildIcon(village: Village, placement: LabelPlacement, selected: boolean): L.DivIcon {
   const is100 = village.mou.percentAgreed === 100;
   const colour = pinColour(village);
+  const stroke = pinStroke(village);
   const approx = village.isApproximate;
 
-  // Push-pin marker: round head ("ball") on top of a thin slate stem; the
-  // stem tip sits at the actual lat/lng. Head radius halved from the prior
-  // pass per request — overall icon shrunk to 14×22.
+  // Classic teardrop / Google-Maps-style pin. Round head with a white hole
+  // at its centre, body tapers to a point at (10, 24). The point sits
+  // exactly on the lat/lng via iconAnchor below.
   //
-  // 14×22 viewBox layout:
-  //   - ball     : circle (cx 7, cy 6, r 5)        — 10px diameter
-  //   - highlight: small lighter spot at (5, 4)    — glossy feel
-  //   - stem     : 1.5px-wide line from (7, 11) to (7, 21)
+  // 20×24 viewBox layout:
+  //   - body: teardrop path centred at head (10, 9), tip at (10, 24)
+  //   - hole: white circle at (10, 9), r = 3.2
   //
-  // Approximate pins use a hollow head with a dashed colour stroke + a
-  // small inner dot in the village colour, preserving the existing
-  // "this is an estimate" cue.
-  const ball = approx
-    ? `<circle cx="7" cy="6" r="5" fill="white" stroke="${colour}" stroke-width="1.4" stroke-dasharray="2 1.5"/>
-       <circle cx="7" cy="6" r="1.6" fill="${colour}"/>`
-    : `<circle cx="7" cy="6" r="5" fill="${colour}"/>
-       <ellipse cx="5" cy="4" rx="1.5" ry="1" fill="white" opacity="0.42"/>`;
+  // Approximate pins use a hollow body with a dashed colour stroke + a
+  // smaller inner dot in the village colour, preserving the "this is an
+  // estimate" cue.
+  const BODY_D =
+    'M 10 1 C 5.03 1 1 5.03 1 10 C 1 16.6 10 24 10 24 ' +
+    'C 10 24 19 16.6 19 10 C 19 5.03 14.97 1 10 1 Z';
 
-  // Selected ring: solid coloured ring in the village's own PFR colour, with
-  // a soft halo behind it so the active pin reads clearly even when it sits
-  // inside a cluster. Drawn before the pin so the ball + stem still paint
-  // on top.
+  const body = approx
+    ? `<path d="${BODY_D}" fill="white" stroke="${colour}" stroke-width="1.6" stroke-dasharray="2 1.6"/>
+       <circle cx="10" cy="9.2" r="2.4" fill="${colour}"/>`
+    : `<path d="${BODY_D}" fill="${colour}" stroke="${stroke}" stroke-width="0.8"/>
+       <circle cx="10" cy="9.2" r="3.2" fill="white"/>`;
+
+  // Selected: soft halo + solid ring in the village's own PFR colour so
+  // the active pin reads clearly even inside a tight cluster.
   const selectedRing = selected
-    ? `<circle cx="7" cy="6" r="10.5" fill="${colour}" opacity="0.16"/>
-       <circle cx="7" cy="6" r="8.5"  fill="none" stroke="${colour}" stroke-width="1.6"/>`
+    ? `<circle cx="10" cy="9.2" r="12.5" fill="${colour}" opacity="0.16"/>
+       <circle cx="10" cy="9.2" r="10.5" fill="none" stroke="${colour}" stroke-width="1.7"/>`
     : '';
 
   const pinSvg = `
-    <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 14 22"
-         style="display:block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); overflow:visible;">
+    <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 ${PIN_W} ${PIN_H}"
+         style="display:block; filter: drop-shadow(0 1.5px 1.2px rgba(0,0,0,0.32)); overflow:visible;">
       ${selectedRing}
-      <line x1="7" y1="11" x2="7" y2="21" stroke="${STICK_COLOUR}" stroke-width="1.5" stroke-linecap="round"/>
-      ${ball}
+      ${body}
     </svg>`;
 
   const star = is100
-    ? '<span class="absolute -top-[3px] -right-[3px] text-amber-500 text-[10px] leading-none" style="text-shadow: 0 0 2px white, 0 0 2px white;">★</span>'
+    ? '<span class="absolute top-[1px] right-[1px] text-amber-500 text-[10px] leading-none" style="text-shadow: 0 0 2px white, 0 0 2px white;">★</span>'
     : '';
 
-  // Chip clears the icon by ~4 px so it doesn't touch the pin head/stem.
-  // Hardcoded class strings so Tailwind's JIT picks them up.
-  //   below : default — under the stem tip
-  //   above : above the head
-  //   right : to the right of the head, vertically centred on the ball
-  //   left  : to the left of the head, vertically centred on the ball
+  // Chip clears the icon by ~4 px so it doesn't touch the pin body.
+  // Positions reference the new 20×24 teardrop:
+  //   - head centred at y=9
+  //   - tip at y=24 (= iconAnchor)
+  //   - body extends x = 1..19
   const chipPos = {
-    above: 'left-1/2 bottom-[24px] -translate-x-1/2',
-    below: 'left-1/2 top-[24px] -translate-x-1/2',
-    right: 'left-[18px] top-[6px] -translate-y-1/2',
-    left:  'right-[18px] top-[6px] -translate-y-1/2',
+    above: 'left-1/2 bottom-[26px] -translate-x-1/2',
+    below: 'left-1/2 top-[26px] -translate-x-1/2',
+    right: 'left-[20px] top-[9px] -translate-y-1/2',
+    left:  'right-[20px] top-[9px] -translate-y-1/2',
   }[placement];
 
   return L.divIcon({
     className: '',
     iconSize: [PIN_W, PIN_H],
-    iconAnchor: [PIN_W / 2, PIN_H], // bottom-center = stem tip = actual lat/lng
+    iconAnchor: [PIN_W / 2, PIN_H], // bottom-center = teardrop tip = actual lat/lng
     html: `
       <div class="relative" style="width:${PIN_W}px;height:${PIN_H}px;" role="img" aria-label="${ariaLabel(village).replace(/"/g, '&quot;')}">
         ${pinSvg}
