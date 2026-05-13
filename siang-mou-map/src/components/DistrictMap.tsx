@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
 import LocationLabel from './LocationLabel';
@@ -191,8 +190,6 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
   // chip's position stays stable as the user toggles filters.
   const placements = useMemo(() => computePlacements(districtVillages), [districtVillages]);
 
-  const mapRef = useRef<L.Map | null>(null);
-
   const failedLayers = [
     districtGeo.error ? 'district outline' : null,
     drainageGeo.error ? 'drainage' : null,
@@ -212,7 +209,6 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
         zoomDelta={0.25}
         attributionControl={false}
         className="h-full w-full"
-        ref={mapRef}
       >
         <FlyTo district={district} />
         <LabelPaneInit />
