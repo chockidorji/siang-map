@@ -66,8 +66,8 @@ export default function Sidebar({
       style={{
         height: '100%',
         borderColor: 'var(--hairline)',
-        padding: '24px 24px 24px 40px',
-        gap: 18,
+        padding: '20px 18px 20px 28px',
+        gap: 16,
         background: 'var(--paper)',
       }}
     >

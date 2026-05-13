@@ -25,7 +25,7 @@ export default function DetailPanel({ village, districtName }: Props) {
       style={{
         height: '100%',
         borderLeft: '1px solid var(--hairline)',
-        padding: '24px 40px 24px 28px',
+        padding: '22px 28px 22px 24px',
         overflow: 'auto',
         background: 'var(--paper)',
       }}

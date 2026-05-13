@@ -62,7 +62,9 @@ export default function App() {
         background: 'var(--paper)',
         color: 'var(--ink)',
         display: 'grid',
-        gridTemplateColumns: '320px 1fr 380px',
+        // Map is the headline. Sidebars trimmed (was 320 / 380) so the
+        // polygon gets the remaining width.
+        gridTemplateColumns: '260px 1fr 300px',
         gridTemplateRows: 'auto 1fr auto',
         gridTemplateAreas:
           '"head head head" "side map detail" "foot foot foot"',

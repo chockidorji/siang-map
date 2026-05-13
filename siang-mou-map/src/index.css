@@ -12,14 +12,14 @@
   --hairline-soft: rgba(26, 24, 21, 0.14);
   --hairline-extra-soft: rgba(26, 24, 21, 0.07);
   --accent: #1f3a5f;
-  --status-high-fill:   #3a6b4a;   /* moss */
-  --status-high-stroke: #1f3a2a;
-  --status-mid-fill:    #b07d35;   /* ochre */
-  --status-mid-stroke:  #6b4515;
-  --status-low-fill:    #a94228;   /* brick */
-  --status-low-stroke:  #5a1b0a;
-  --status-none-fill:   #8a857d;   /* stone */
-  --status-none-stroke: #3a3530;
+  --status-high-fill:   #059669;   /* emerald */
+  --status-high-stroke: #065f46;
+  --status-mid-fill:    #ea580c;   /* vivid orange */
+  --status-mid-stroke:  #9a3412;
+  --status-low-fill:    #dc2626;   /* signal red */
+  --status-low-stroke:  #7f1d1d;
+  --status-none-fill:   #64748b;   /* slate */
+  --status-none-stroke: #1e293b;
 
   --font-serif: 'Newsreader', 'Spectral', Georgia, serif;
   --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;

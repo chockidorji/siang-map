@@ -18,18 +18,19 @@ interface Props {
   onClick: (village: Village, event: L.LeafletMouseEvent) => void;
 }
 
-// Pin colour tracks the MoU agreement rate using the Atlas earth-tone
-// palette (moss / ochre / brick / stone) instead of the bright stoplight.
-//   ≥ 80%  → moss   (high)
-//   ≥ 40%  → ochre  (mid)
-//   <  40% → brick  (low)
-//   null   → stone  (data inconsistent / no MoU)
+// Pin colour tracks the MoU agreement rate. Vibrant palette so the
+// pins read clearly against the white sheet:
+//   ≥ 80%  → emerald (high)
+//   ≥ 40%  → vivid orange (mid)
+//   <  40% → signal red (low)
+//   null   → slate (data inconsistent / no MoU)
+// Keep in sync with the --status-*-fill CSS variables in index.css.
 function pinColour(village: Village): string {
   const pct = village.mou.percentAgreed;
-  if (pct === null) return '#8a857d';
-  if (pct >= 80)    return '#3a6b4a';
-  if (pct >= 40)    return '#b07d35';
-  return '#a94228';
+  if (pct === null) return '#64748b';
+  if (pct >= 80)    return '#059669';
+  if (pct >= 40)    return '#ea580c';
+  return '#dc2626';
 }
 
 function ariaLabel(v: Village): string {
