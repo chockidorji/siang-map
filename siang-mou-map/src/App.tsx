@@ -71,7 +71,7 @@ export default function App() {
       }}
     >
       <div style={{ gridArea: 'head' }}>
-        <Header />
+        <Header district={district} districtName={DISTRICT_LABEL[district]} />
       </div>
 
       <div style={{ gridArea: 'side', minHeight: 0 }}>
