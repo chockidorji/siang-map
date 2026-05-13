@@ -27,7 +27,7 @@ export default function Legend({ collapsed, onToggle }: Props) {
   return (
     <aside
       aria-label="Map key"
-      className="pointer-events-auto absolute bottom-3 right-3 z-[600] w-[170px]
+      className="pointer-events-auto absolute left-3 top-16 z-[600] w-[170px]
                  select-none rounded-md border border-gray-200 bg-white/85 px-2.5 py-2
                  text-[10.5px] text-gray-700 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_10px_rgba(0,0,0,0.06)]
                  backdrop-blur-sm"
