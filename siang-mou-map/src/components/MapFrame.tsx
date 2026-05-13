@@ -139,45 +139,56 @@ function KeyBlock() {
       aria-label="PFR agreement legend"
       style={{
         position: 'absolute',
-        bottom: 18,
-        left: 18,
-        background: 'rgba(255, 255, 255, 0.92)',
-        border: '0.5px solid var(--hairline-soft)',
-        padding: '8px 10px 9px',
-        fontFamily: 'var(--font-mono)',
-        fontSize: 9,
-        letterSpacing: '0.08em',
+        bottom: 22,
+        left: 22,
+        background: 'rgba(255, 255, 255, 0.94)',
+        border: '1px solid var(--hairline-soft)',
+        padding: '14px 18px 15px',
         color: 'var(--ink)',
         pointerEvents: 'none',
-        minWidth: 120,
+        minWidth: 200,
+        boxShadow: '0 1px 2px rgba(26,24,21,0.04)',
       }}
     >
       <div
         style={{
+          fontFamily: 'var(--font-mono)',
           fontWeight: 600,
-          letterSpacing: '0.2em',
-          opacity: 0.55,
-          marginBottom: 6,
+          fontSize: 11,
+          letterSpacing: '0.22em',
+          opacity: 0.6,
+          marginBottom: 11,
           textTransform: 'uppercase',
+          borderBottom: '1px solid var(--hairline-soft)',
+          paddingBottom: 8,
         }}
       >
-        Key · PFR agreement
+        Key · PFR Agreement
       </div>
-      <div style={{ display: 'grid', gap: 3 }}>
+      <div style={{ display: 'grid', gap: 8 }}>
         {KEY_ROWS.map((r) => (
-          <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
             <span
               aria-hidden="true"
               style={{
                 display: 'inline-block',
-                width: 7,
-                height: 7,
+                width: 11,
+                height: 11,
                 borderRadius: '50%',
                 background: r.fill,
-                border: `1px solid ${r.stroke}`,
+                border: `1.5px solid ${r.stroke}`,
+                flex: '0 0 auto',
               }}
             />
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 10, letterSpacing: 0, opacity: 0.85 }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 13,
+                letterSpacing: '0.005em',
+                color: 'var(--ink)',
+                opacity: 0.9,
+              }}
+            >
               {r.label}
             </span>
           </div>
