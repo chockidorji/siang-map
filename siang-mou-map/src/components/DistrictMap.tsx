@@ -75,6 +75,12 @@ function LabelPaneInit() {
       top.style.zIndex = '680';
       top.style.pointerEvents = 'none';
     }
+    // Selected village floats above EVERYTHING — district HQ labels included.
+    // VillagePin opts into this pane when its `selected` prop is true.
+    if (!map.getPane('selectedPin')) {
+      const sel = map.createPane('selectedPin');
+      sel.style.zIndex = '720';
+    }
     const apply = () => {
       pane!.classList.toggle('labelpane-zoomed-out', map.getZoom() < SETTLEMENT_REVEAL_ZOOM);
     };

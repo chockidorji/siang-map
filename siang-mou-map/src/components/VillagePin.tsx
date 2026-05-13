@@ -134,8 +134,11 @@ export default function VillagePin({ village, placement = 'below', selected = fa
       keyboard
       title={ariaLabel(village)}
       alt={ariaLabel(village)}
-      // The selected village floats above every other marker and label so it
-      // never gets hidden under a neighbour in dense clusters.
+      // The selected village floats above EVERY other layer including the
+      // district-HQ label pane — Ramsing was getting hidden behind the
+      // YINGKIONG label when selected; the dedicated 'selectedPin' pane
+      // (zIndex 720) keeps it on top regardless.
+      pane={selected ? 'selectedPin' : 'markerPane'}
       zIndexOffset={selected ? 1000 : 0}
       eventHandlers={{
         click: (e) => onClick(village, e),
