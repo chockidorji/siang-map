@@ -104,6 +104,12 @@ export default function MapFrame({ district, districtName, children }: Props) {
         >
           <Compass />
         </div>
+
+        {/* PFR-agreement key — sits where the printed atlas places its
+            legend, inside the cartographic border at the bottom-left so a
+            cold viewer reads the pin colours without having to glance over
+            to the sidebar. */}
+        <KeyBlock />
       </div>
 
       {/* The actual map sits below the chrome */}
@@ -117,6 +123,67 @@ export default function MapFrame({ district, districtName, children }: Props) {
         {children}
       </div>
     </main>
+  );
+}
+
+const KEY_ROWS = [
+  { fill: 'var(--status-high-fill)', stroke: 'var(--status-high-stroke)', label: '≥ 80% agreed' },
+  { fill: 'var(--status-mid-fill)',  stroke: 'var(--status-mid-stroke)',  label: '40 – 80%' },
+  { fill: 'var(--status-low-fill)',  stroke: 'var(--status-low-stroke)',  label: '< 40%' },
+  { fill: 'var(--status-none-fill)', stroke: 'var(--status-none-stroke)', label: 'No MoU yet' },
+];
+
+function KeyBlock() {
+  return (
+    <div
+      aria-label="PFR agreement legend"
+      style={{
+        position: 'absolute',
+        bottom: 18,
+        left: 18,
+        background: 'rgba(255, 255, 255, 0.92)',
+        border: '0.5px solid var(--hairline-soft)',
+        padding: '8px 10px 9px',
+        fontFamily: 'var(--font-mono)',
+        fontSize: 9,
+        letterSpacing: '0.08em',
+        color: 'var(--ink)',
+        pointerEvents: 'none',
+        minWidth: 120,
+      }}
+    >
+      <div
+        style={{
+          fontWeight: 600,
+          letterSpacing: '0.2em',
+          opacity: 0.55,
+          marginBottom: 6,
+          textTransform: 'uppercase',
+        }}
+      >
+        Key · PFR agreement
+      </div>
+      <div style={{ display: 'grid', gap: 3 }}>
+        {KEY_ROWS.map((r) => (
+          <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'inline-block',
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                background: r.fill,
+                border: `1px solid ${r.stroke}`,
+              }}
+            />
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 10, letterSpacing: 0, opacity: 0.85 }}>
+              {r.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
