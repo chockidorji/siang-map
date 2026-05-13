@@ -219,7 +219,7 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
             data={districtGeo.data}
             // Earth-tone land — paperAlt fill, ink hairline border. Keep in
             // sync with --paper-alt in index.css.
-            style={{ color: '#2a2622', weight: 1.2, fillColor: '#f4ede0', fillOpacity: 1 }}
+            style={{ color: '#2a2622', weight: 1.2, fillColor: '#f7f3e9', fillOpacity: 1 }}
           />
         )}
         {drainageGeo.data && (
