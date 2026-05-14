@@ -66,12 +66,16 @@ export const villages: Village[] = [
     mou: { signedOn: '6th May 2026', households: 56, agreedForPFR: 54, percentAgreed: 96.4 } },
   { id: 'ninging',  name: 'Ninging',  district: 'upper-siang', lat: 28.900000, lng: 94.980000, isApproximate: true,
     mou: { signedOn: '7th May 2026', households: 58, agreedForPFR: 39, percentAgreed: 67.2 } },
+  // Angging / Singging / Resing: agreed count exceeds household count in the
+  // source figures; per the Department officer's direction (13 May 2026),
+  // these are treated as 100% agreement while the underlying household and
+  // agreed numbers are preserved as recorded.
   { id: 'angging',  name: 'Angging',  district: 'upper-siang', lat: 28.933953, lng: 94.826368, isApproximate: false,
-    mou: { signedOn: '7th May 2026', households: 12, agreedForPFR: 18, percentAgreed: null } },
+    mou: { signedOn: '7th May 2026', households: 12, agreedForPFR: 18, percentAgreed: 100.0 } },
   { id: 'singging', name: 'Singging', district: 'upper-siang', lat: 28.940000, lng: 94.850000, isApproximate: true,
-    mou: { signedOn: '7th May 2026', households: 21, agreedForPFR: 25, percentAgreed: null } },
+    mou: { signedOn: '7th May 2026', households: 21, agreedForPFR: 25, percentAgreed: 100.0 } },
   { id: 'resing',   name: 'Resing',   district: 'upper-siang', lat: 28.925000, lng: 94.810000, isApproximate: true,
-    mou: { signedOn: '7th May 2026', households: 36, agreedForPFR: 45, percentAgreed: null } },
+    mou: { signedOn: '7th May 2026', households: 36, agreedForPFR: 45, percentAgreed: 100.0 } },
   { id: 'palling',  name: 'Palling',  district: 'upper-siang', lat: 28.836530, lng: 94.808875, isApproximate: false,
     mou: { signedOn: '8th May 2026', households: 30, agreedForPFR: 26, percentAgreed: 86.7 } },
   // Zido — added per the 8 May 2026 MoU sheet (Status of MOU 1.docx).
