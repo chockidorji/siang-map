@@ -55,7 +55,10 @@ const PIN_W = 20;
 const PIN_H = 24;
 
 function buildIcon(village: Village, placement: LabelPlacement, selected: boolean): L.DivIcon {
-  const is100 = village.mou.percentAgreed === 100;
+  // Star fires for >=100% — covers the three Upper Siang villages whose
+  // recorded agreed-count exceeds the household count (Angging 150%,
+  // Singging 119%, Resing 125%), not just clean 100% cases.
+  const is100 = (village.mou.percentAgreed ?? 0) >= 100;
   const colour = pinColour(village);
   const stroke = pinStroke(village);
   const approx = village.isApproximate;
