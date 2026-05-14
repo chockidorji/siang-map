@@ -85,9 +85,10 @@ export const villages: Village[] = [
   { id: 'zido',     name: 'Zido',     district: 'upper-siang', lat: 28.982156, lng: 94.905050, isApproximate: false,
     mou: { signedOn: '8th May 2026', households: 55, agreedForPFR: 36, percentAgreed: 65.5 } },
   // Haleng — reclassified from Siang to Upper Siang per the Department
-  // officer's correction (13 May 2026); the source MoU sheet had it under
-  // Siang but it administratively belongs to Upper Siang.
-  { id: 'haleng',   name: 'Haleng',   district: 'upper-siang', lat: 28.410000, lng: 94.890000, isApproximate: true,
+  // officer's correction (13 May 2026), and re-pinned to the SHP-exact
+  // coordinates (SHP feature 'Halleng', OBJECTID 1585) near Yingkiong H.Q.
+  // — the previous eyeballed coords had it ~25 km too far west.
+  { id: 'haleng',   name: 'Haleng',   district: 'upper-siang', lat: 28.606510, lng: 95.038960, isApproximate: false,
     mou: { signedOn: '26th February 2026', households: 8, agreedForPFR: 8, percentAgreed: 100.0 } },
 
   // ---------- Siang District (7) ----------

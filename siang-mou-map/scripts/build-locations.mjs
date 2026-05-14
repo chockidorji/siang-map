@@ -51,7 +51,7 @@ const PFR_COORDS = [
   [28.325827, 95.006730], // Begging
   [28.350995, 95.021651], // Parong Rongku
   [28.371267, 95.059300], // Sitang & Dite Dime
-  [28.410000, 94.890000], // Haleng (approx)
+  [28.606510, 95.038960], // Haleng (SHP-exact, was approx 28.41/94.89)
   [28.519470, 95.066185], // Pangkang Jorkong
 ];
 

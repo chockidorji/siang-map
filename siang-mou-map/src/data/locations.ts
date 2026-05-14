@@ -73,7 +73,6 @@ export const mapLocations: MapLocation[] = [
   { id: "gobuk", name: "Gobuk", tier: 'settlement', district: 'upper-siang', lat: 28.575441, lng: 95.126109 },
   { id: "gome", name: "Gome", tier: 'settlement', district: 'upper-siang', lat: 28.990030, lng: 94.871101 },
   { id: "gossang", name: "Gossang", tier: 'settlement', district: 'upper-siang', lat: 28.614400, lng: 95.018770 },
-  { id: "halleng", name: "Halleng", tier: 'settlement', district: 'upper-siang', lat: 28.606510, lng: 95.038960 },
   { id: "jeru", name: "Jeru", tier: 'settlement', district: 'upper-siang', lat: 28.259011, lng: 95.196930 },
   { id: "jomlo-bari", name: "Jomlo Bari", tier: 'settlement', district: 'siang', lat: 28.216059, lng: 94.810247 },
   { id: "jomlo-mongku", name: "Jomlo Mongku", tier: 'settlement', district: 'siang', lat: 28.218294, lng: 94.819318 },
