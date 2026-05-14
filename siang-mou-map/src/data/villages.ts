@@ -39,7 +39,7 @@ export interface Village {
 // for villages absent from the shapefiles.
 
 export const villages: Village[] = [
-  // ---------- Upper Siang District (17) ----------
+  // ---------- Upper Siang District (18) ----------
   { id: 'komkar',   name: 'Komkar',   district: 'upper-siang', lat: 28.483800, lng: 95.111100, isApproximate: false,
     mou: { signedOn: '30th December 2025', households: 262, agreedForPFR: 257, percentAgreed: 98.1 } },
   { id: 'karko',    name: 'Karko',    district: 'upper-siang', lat: 28.568795, lng: 95.056778, isApproximate: false,
@@ -57,23 +57,28 @@ export const villages: Village[] = [
   { id: 'likor',    name: 'Likor',    district: 'upper-siang', lat: 28.826674, lng: 94.895337, isApproximate: false,
     mou: { signedOn: '19th March 2026', households: 134, agreedForPFR: 134, percentAgreed: 100.0 } },
   { id: 'mosing',   name: 'Mosing',   district: 'upper-siang', lat: 28.830000, lng: 94.800000, isApproximate: true,
-    mou: { signedOn: '6th May 2026', households: 53, agreedForPFR: 45, percentAgreed: 84.9 } },
+    mou: { signedOn: '6th May 2026', households: 66, agreedForPFR: 44, percentAgreed: 66.7 } },
   { id: 'miging',   name: 'Miging',   district: 'upper-siang', lat: 28.852783, lng: 94.772602, isApproximate: false,
-    mou: { signedOn: '6th May 2026', households: 69, agreedForPFR: 50, percentAgreed: 72.5 } },
+    mou: { signedOn: '6th May 2026', households: 96, agreedForPFR: 50, percentAgreed: 52.1 } },
   { id: 'ngaming',  name: 'Ngaming',  district: 'upper-siang', lat: 28.968627, lng: 94.937656, isApproximate: false,
-    mou: { signedOn: '6th May 2026', households: 74, agreedForPFR: 67, percentAgreed: 90.5 } },
+    mou: { signedOn: '6th May 2026', households: 83, agreedForPFR: 67, percentAgreed: 80.7 } },
   { id: 'pango',    name: 'Pango',    district: 'upper-siang', lat: 28.887785, lng: 94.752884, isApproximate: false,
-    mou: { signedOn: '6th May 2026', households: 56, agreedForPFR: 39, percentAgreed: 69.6 } },
+    mou: { signedOn: '6th May 2026', households: 56, agreedForPFR: 54, percentAgreed: 96.4 } },
   { id: 'ninging',  name: 'Ninging',  district: 'upper-siang', lat: 28.900000, lng: 94.980000, isApproximate: true,
     mou: { signedOn: '7th May 2026', households: 58, agreedForPFR: 39, percentAgreed: 67.2 } },
   { id: 'angging',  name: 'Angging',  district: 'upper-siang', lat: 28.933953, lng: 94.826368, isApproximate: false,
-    mou: { signedOn: '7th May 2026', households: 5, agreedForPFR: 22, percentAgreed: null } },
+    mou: { signedOn: '7th May 2026', households: 12, agreedForPFR: 18, percentAgreed: null } },
   { id: 'singging', name: 'Singging', district: 'upper-siang', lat: 28.940000, lng: 94.850000, isApproximate: true,
     mou: { signedOn: '7th May 2026', households: 21, agreedForPFR: 25, percentAgreed: null } },
   { id: 'resing',   name: 'Resing',   district: 'upper-siang', lat: 28.925000, lng: 94.810000, isApproximate: true,
     mou: { signedOn: '7th May 2026', households: 36, agreedForPFR: 45, percentAgreed: null } },
   { id: 'palling',  name: 'Palling',  district: 'upper-siang', lat: 28.836530, lng: 94.808875, isApproximate: false,
     mou: { signedOn: '8th May 2026', households: 30, agreedForPFR: 26, percentAgreed: 86.7 } },
+  // Zido — added per the 8 May 2026 MoU sheet (Status of MOU 1.docx).
+  // Coordinates from the SHP entry 'Jido' (variant transcription of the
+  // same village; the PDF atlas and SHP both use 'Jido').
+  { id: 'zido',     name: 'Zido',     district: 'upper-siang', lat: 28.982156, lng: 94.905050, isApproximate: false,
+    mou: { signedOn: '8th May 2026', households: 55, agreedForPFR: 36, percentAgreed: 65.5 } },
 
   // ---------- Siang District (8) ----------
   { id: 'pangkang-kumku',   name: 'Pangkang Kumku',     district: 'siang', lat: 28.436273, lng: 95.107728, isApproximate: false,
