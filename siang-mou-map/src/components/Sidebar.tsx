@@ -21,7 +21,9 @@ const STATUS_LABEL: Record<Status, string> = {
   high: '≥ 80% agreed',
   mid: '40 – 80%',
   low: '< 40%',
-  none: 'No MoU yet',
+  // 'none' = MoU signed but the source figures are inconsistent (agreed > hh)
+  // — see comment on STATUS_LABEL in DetailPanel.tsx.
+  none: 'Data Pending Review',
 };
 const STATUS_VAR: Record<Status, { fill: string; stroke: string }> = {
   high: { fill: 'var(--status-high-fill)', stroke: 'var(--status-high-stroke)' },

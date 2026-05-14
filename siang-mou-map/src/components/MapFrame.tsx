@@ -135,7 +135,7 @@ const KEY_ROWS = [
   { fill: 'var(--status-high-fill)', stroke: 'var(--status-high-stroke)', label: '≥ 80% agreed' },
   { fill: 'var(--status-mid-fill)',  stroke: 'var(--status-mid-stroke)',  label: '40 – 80%' },
   { fill: 'var(--status-low-fill)',  stroke: 'var(--status-low-stroke)',  label: '< 40%' },
-  { fill: 'var(--status-none-fill)', stroke: 'var(--status-none-stroke)', label: 'No MoU yet' },
+  { fill: 'var(--status-none-fill)', stroke: 'var(--status-none-stroke)', label: 'Data Pending Review' },
 ];
 
 function KeyBlock() {

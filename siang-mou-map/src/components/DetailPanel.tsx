@@ -9,7 +9,12 @@ const STATUS_LABEL = {
   high: '≥ 80% agreed',
   mid:  '40 – 80%',
   low:  '< 40%',
-  none: 'No MoU yet',
+  // Angging / Singging / Resing all signed MoUs on 7 May 2026, but the
+  // Department's sheet shows the percentage as '—' because the recorded
+  // 'agreed' count exceeds the household count (mathematically impossible).
+  // Until those figures are reconciled, the badge says so explicitly
+  // rather than implying no MoU exists.
+  none: 'Data Pending Review',
 } as const;
 
 const STATUS_PAL = {
