@@ -91,9 +91,16 @@ function buildIcon(village: Village, placement: LabelPlacement, selected: boolea
        <circle cx="10" cy="9.2" r="10.5" fill="none" stroke="${colour}" stroke-width="1.7"/>`
     : '';
 
+  // When selected, the SVG runs a short bounce keyframe (see index.css)
+  // that settles at scale 1.25. transform-origin pins the bottom-centre
+  // (the teardrop tip = the actual lat/lng) so the pin doesn't drift off
+  // its point during the animation.
+  const animStyle = selected
+    ? 'transform-origin: 50% 100%; animation: pin-bounce 520ms cubic-bezier(.34,1.56,.64,1) forwards;'
+    : '';
   const pinSvg = `
     <svg width="${PIN_W}" height="${PIN_H}" viewBox="0 0 ${PIN_W} ${PIN_H}"
-         style="display:block; filter: drop-shadow(0 1.5px 1.2px rgba(0,0,0,0.32)); overflow:visible;">
+         style="display:block; filter: drop-shadow(0 1.5px 1.2px rgba(0,0,0,0.32)); overflow:visible; ${animStyle}">
       ${selectedRing}
       ${body}
     </svg>`;

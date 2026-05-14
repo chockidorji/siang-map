@@ -77,6 +77,17 @@ body {
     0 0 2px #fff;
 }
 
+/* Selected PFR pin: a short cubic-bezier bounce that settles at 1.25× scale.
+   transform-origin is the bottom-centre of the SVG (= the teardrop tip =
+   the actual lat/lng), so the pin pulses without drifting off its point. */
+@keyframes pin-bounce {
+  0%   { transform: scale(0.92) translateY(0); }
+  35%  { transform: scale(1.45) translateY(-9px); }
+  60%  { transform: scale(1.18) translateY(0); }
+  80%  { transform: scale(1.32) translateY(-2px); }
+  100% { transform: scale(1.25) translateY(0); }
+}
+
 /* Text-only location labels (no pin, no chip — pure typography).
    - centre the text on the actual lat/lng via translate
    - thick white halo so the name stays readable over rivers, drainage,
