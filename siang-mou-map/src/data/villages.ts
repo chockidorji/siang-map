@@ -39,7 +39,7 @@ export interface Village {
 // for villages absent from the shapefiles.
 
 export const villages: Village[] = [
-  // ---------- Upper Siang District (18) ----------
+  // ---------- Upper Siang District (19) ----------
   { id: 'komkar',   name: 'Komkar',   district: 'upper-siang', lat: 28.483800, lng: 95.111100, isApproximate: false,
     mou: { signedOn: '30th December 2025', households: 262, agreedForPFR: 257, percentAgreed: 98.1 } },
   { id: 'karko',    name: 'Karko',    district: 'upper-siang', lat: 28.568795, lng: 95.056778, isApproximate: false,
@@ -84,8 +84,13 @@ export const villages: Village[] = [
   // same village; the PDF atlas and SHP both use 'Jido').
   { id: 'zido',     name: 'Zido',     district: 'upper-siang', lat: 28.982156, lng: 94.905050, isApproximate: false,
     mou: { signedOn: '8th May 2026', households: 55, agreedForPFR: 36, percentAgreed: 65.5 } },
+  // Haleng — reclassified from Siang to Upper Siang per the Department
+  // officer's correction (13 May 2026); the source MoU sheet had it under
+  // Siang but it administratively belongs to Upper Siang.
+  { id: 'haleng',   name: 'Haleng',   district: 'upper-siang', lat: 28.410000, lng: 94.890000, isApproximate: true,
+    mou: { signedOn: '26th February 2026', households: 8, agreedForPFR: 8, percentAgreed: 100.0 } },
 
-  // ---------- Siang District (8) ----------
+  // ---------- Siang District (7) ----------
   { id: 'pangkang-kumku',   name: 'Pangkang Kumku',     district: 'siang', lat: 28.436273, lng: 95.107728, isApproximate: false,
     mou: { signedOn: '23rd May 2025', households: 80, agreedForPFR: 46, percentAgreed: 57.5 } },
   { id: 'riga',             name: 'Riga',               district: 'siang', lat: 28.434147, lng: 95.043929, isApproximate: false,
@@ -98,8 +103,6 @@ export const villages: Village[] = [
     mou: { signedOn: '20th September 2025', households: 108, agreedForPFR: 74, percentAgreed: 68.5 } },
   { id: 'sitang-dite-dime', name: 'Sitang & Dite Dime', district: 'siang', lat: 28.371267, lng: 95.059300, isApproximate: false,
     mou: { signedOn: '21st February 2026', households: 84, agreedForPFR: 59, percentAgreed: 70.2 } },
-  { id: 'haleng',           name: 'Haleng',             district: 'siang', lat: 28.410000, lng: 94.890000, isApproximate: true,
-    mou: { signedOn: '26th February 2026', households: 8, agreedForPFR: 8, percentAgreed: 100.0 } },
   { id: 'pangkang-jorkong', name: 'Pangkang Jorkong',   district: 'siang', lat: 28.519470, lng: 95.066185, isApproximate: false,
     mou: { signedOn: '3rd March 2026', households: 86, agreedForPFR: 74, percentAgreed: 86.0 } },
 ];
