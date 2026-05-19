@@ -158,9 +158,7 @@ function Detail({ v, districtName }: { v: Village; districtName: string }) {
         <SectionLabel>Documents</SectionLabel>
         <ul style={{ margin: '12px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 8 }}>
           {[
-            { name: 'Memorandum of Understanding',  code: `MoU-${docCode}`, state: 'signed' as const },
-            { name: 'Preliminary Feasibility Report', code: `PFR-2026-${docCode.slice(-4)}`, state: 'shared' as const },
-            { name: 'Household consent register',   code: `HCR-${docCode}`, state: s === 'high' ? 'closed' as const : 'in progress' as const },
+            { name: 'Memorandum of Understanding', code: `MoU-${docCode}`, state: 'signed' as const },
           ].map((d) => (
             <li
               key={d.code}
