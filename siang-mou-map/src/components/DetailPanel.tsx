@@ -9,11 +9,12 @@ const STATUS_LABEL = {
   high: '≥ 80% agreed',
   mid:  '40 – 80%',
   low:  '< 40%',
-  // Angging / Singging / Resing all signed MoUs on 7 May 2026, but the
-  // Department's sheet shows the percentage as '—' because the recorded
-  // 'agreed' count exceeds the household count (mathematically impossible).
-  // Until those figures are reconciled, the badge says so explicitly
-  // rather than implying no MoU exists.
+  // 'none' = MoU signed but percentAgreed is null (no village currently
+  // hits this branch — Angging/Singging/Resing were capped at 100% in
+  // b947bd6/b17a572, so they paint green). Retained as a type-contract
+  // floor and a fallback badge if future data regresses to null. Per the
+  // 2026-05-19 officer brief the legend and sidebar filter intentionally
+  // hide this tier; the badge here is the only user-visible surface.
   none: 'Data Pending Review',
 } as const;
 

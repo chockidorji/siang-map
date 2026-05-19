@@ -21,8 +21,10 @@ const STATUS_LABEL: Record<Status, string> = {
   high: '≥ 80% agreed',
   mid: '40 – 80%',
   low: '< 40%',
-  // 'none' = MoU signed but the source figures are inconsistent (agreed > hh)
-  // — see comment on STATUS_LABEL in DetailPanel.tsx.
+  // 'none' kept for the Record<Status,_> type-floor; no village currently
+  // maps here. STATUS_ORDER below intentionally omits 'none' so the
+  // checkbox UI shows only the three tiers per the 2026-05-19 officer
+  // brief — the DetailPanel badge is the lone fallback surface.
   none: 'Data Pending Review',
 };
 const STATUS_VAR: Record<Status, { fill: string; stroke: string }> = {
