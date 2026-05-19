@@ -16,7 +16,7 @@ interface Props {
   onSelect: (v: Village) => void;
 }
 
-const STATUS_ORDER: Status[] = ['high', 'mid', 'low', 'none'];
+const STATUS_ORDER: Status[] = ['high', 'mid', 'low'];
 const STATUS_LABEL: Record<Status, string> = {
   high: '≥ 80% agreed',
   mid: '40 – 80%',
