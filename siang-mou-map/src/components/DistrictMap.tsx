@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, GeoJSON, Circle, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import VillagePin, { type LabelPlacement } from './VillagePin';
 import LocationLabel from './LocationLabel';
@@ -61,6 +61,18 @@ function FlyTo({ district }: { district: District }) {
 // `labelpane-zoomed-out` on the label pane when the user drops below
 // SETTLEMENT_REVEAL_ZOOM — CSS fades settlements there.
 const SETTLEMENT_REVEAL_ZOOM = 10;
+
+// Geku project-area circle — officer brief 2026-05-19.
+// Centre lat is the midpoint of the two reference villages (Pangkang
+// Kumku 28.436 N and Riew 28.331 N). Centre lng is Geku's longitude.
+// Radius (~5.5 km) sits the north edge just below Pangkang Kumku and
+// the south edge just above Riew, with a small margin so the reference
+// pins remain visible.
+const GEKU_AREA = {
+  center: [28.3837, 95.0885] as [number, number],
+  radius: 5500,
+};
+
 function LabelPaneInit() {
   const map = useMap();
   useEffect(() => {
@@ -80,6 +92,15 @@ function LabelPaneInit() {
     if (!map.getPane('selectedPin')) {
       const sel = map.createPane('selectedPin');
       sel.style.zIndex = '720';
+    }
+    if (!map.getPane('projectAreaPane')) {
+      const pa = map.createPane('projectAreaPane');
+      // Above the GeoJSON tile/path layers (default overlayPane is 400)
+      // but below labels (550), district HQ (680), markers (default 600),
+      // and the selected pin (720). 410 keeps the translucent fill above
+      // rivers/drainage but well under any pin.
+      pa.style.zIndex = '410';
+      pa.style.pointerEvents = 'none';
     }
     const apply = () => {
       pane!.classList.toggle('labelpane-zoomed-out', map.getZoom() < SETTLEMENT_REVEAL_ZOOM);
@@ -242,6 +263,23 @@ export default function DistrictMap({ district, visibleVillageIds, selectedId, o
             key={`rivers-${district}`}
             data={riversGeo.data}
             style={{ color: '#5a7fa3', weight: 1.4, opacity: 0.85 }}
+          />
+        )}
+
+        {district === 'upper-siang' && (
+          <Circle
+            center={GEKU_AREA.center}
+            radius={GEKU_AREA.radius}
+            pathOptions={{
+              color: '#dc2626',
+              weight: 1.6,
+              opacity: 0.75,
+              fillColor: '#dc2626',
+              fillOpacity: 0.08,
+              dashArray: '4 3',
+            }}
+            interactive={false}
+            pane="projectAreaPane"
           />
         )}
 
