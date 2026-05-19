@@ -61,28 +61,17 @@ function buildIcon(village: Village, placement: LabelPlacement, selected: boolea
   const is100 = (village.mou.percentAgreed ?? 0) >= 100;
   const colour = pinColour(village);
   const stroke = pinStroke(village);
-  const approx = village.isApproximate;
-
-  // Classic teardrop / Google-Maps-style pin. Round head with a white hole
-  // at its centre, body tapers to a point at (10, 24). The point sits
-  // exactly on the lat/lng via iconAnchor below.
-  //
-  // 20×24 viewBox layout:
-  //   - body: teardrop path centred at head (10, 9), tip at (10, 24)
-  //   - hole: white circle at (10, 9), r = 3.2
-  //
-  // Approximate pins use a hollow body with a dashed colour stroke + a
-  // smaller inner dot in the village colour, preserving the "this is an
-  // estimate" cue.
+  // Officer feedback 2026-05-19: every pin is the same shape; only the fill
+  // colour conveys the agreement tier. `isApproximate` is still preserved on
+  // the data model (it's surfaced in the detail panel + aria label) but no
+  // longer changes the marker glyph.
   const BODY_D =
     'M 10 1 C 5.03 1 1 5.03 1 10 C 1 16.6 10 24 10 24 ' +
     'C 10 24 19 16.6 19 10 C 19 5.03 14.97 1 10 1 Z';
 
-  const body = approx
-    ? `<path d="${BODY_D}" fill="white" stroke="${colour}" stroke-width="1.6" stroke-dasharray="2 1.6"/>
-       <circle cx="10" cy="9.2" r="2.4" fill="${colour}"/>`
-    : `<path d="${BODY_D}" fill="${colour}" stroke="${stroke}" stroke-width="0.8"/>
-       <circle cx="10" cy="9.2" r="3.2" fill="white"/>`;
+  const body =
+    `<path d="${BODY_D}" fill="${colour}" stroke="${stroke}" stroke-width="0.8"/>
+     <circle cx="10" cy="9.2" r="3.2" fill="white"/>`;
 
   // Selected: soft halo + solid ring in the village's own PFR colour so
   // the active pin reads clearly even inside a tight cluster.
