@@ -1,1 +1,4 @@
 siang-mou-map/node_modules/
+outputs/
+.DS_Store
+.claude/

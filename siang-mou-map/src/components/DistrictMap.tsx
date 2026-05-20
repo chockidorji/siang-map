@@ -197,9 +197,12 @@ function LayerStatusBanner({ failed }: { failed: string[] }) {
 }
 
 export default function DistrictMap({ district, visibleVillageIds, selectedId, onSelect }: Props) {
-  const districtGeo = useGeoJson(`/geo/district-${district}.geojson`);
-  const drainageGeo = useGeoJson(`/geo/drainage-${district}.geojson`);
-  const riversGeo = useGeoJson(`/geo/rivers-${district}.geojson`);
+  // Prefix with Vite's BASE_URL so the same code works locally
+  // (BASE_URL = '/') and on GitHub Pages (BASE_URL = '/siang-map/').
+  const base = import.meta.env.BASE_URL;
+  const districtGeo = useGeoJson(`${base}geo/district-${district}.geojson`);
+  const drainageGeo = useGeoJson(`${base}geo/drainage-${district}.geojson`);
+  const riversGeo = useGeoJson(`${base}geo/rivers-${district}.geojson`);
 
   const districtVillages = useMemo(
     () => villages.filter((v) => v.district === district),
