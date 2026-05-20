@@ -143,17 +143,6 @@ function Detail({ v, districtName }: { v: Village; districtName: string }) {
         <Stat label="Agreed for PFR">{v.mou.agreedForPFR}</Stat>
       </div>
 
-      {/* Custodians — placeholder, real data not yet captured */}
-      <div style={{ borderTop: '1px solid var(--hairline-soft)', paddingTop: 18 }}>
-        <SectionLabel>Custodians</SectionLabel>
-        <div style={{ marginTop: 10, fontFamily: 'var(--font-serif)', fontSize: 16, fontWeight: 500, opacity: 0.45 }}>
-          —
-        </div>
-        <div style={{ fontSize: 12, opacity: 0.55, marginTop: 2 }}>
-          Gaon Burah · to be recorded
-        </div>
-      </div>
-
       {/* Documents */}
       <div style={{ borderTop: '1px solid var(--hairline-soft)', paddingTop: 18 }}>
         <SectionLabel>Documents</SectionLabel>
